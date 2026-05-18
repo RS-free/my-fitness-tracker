@@ -151,6 +151,17 @@ textarea {
     letter-spacing: -0.03em;
     font-weight: 800;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    /* Додаємо ці два рядки, щоб текст автоматично ділився на стовпчик */
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+/* Стилізуємо назву щоденника під іменем, щоб вона була трохи меншою і витонченішою */
+.motivation-content h1 .subtitle {
+    font-size: clamp(1.2rem, 1.8vw, 1.5rem);
+    font-weight: 500;
+    color: #cbd5e1;
 }
 
 #quoteText {
