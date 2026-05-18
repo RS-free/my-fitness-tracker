@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="uk">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Мій Фітнес Щоденник</title>
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Мій Фітнес Щоденник</h1>
+
+            <section class="card">
+                <h2>💧 Вода (склянки по 250 мл)</h2>
+                <div class="water-tracker">
+                    <button id="btnMinus">-</button>
+                    <span id="waterCount">0</span>
+                    <button id="btnPlus">+</button>
+                </div>
+                <p class="target-info">
+                    Ціль: 10-12 склянок на день для розрідження крові
+                </p>
+            </section>
+
+            <section class="card">
+                <h2>💊 Вітаміни та добавки</h2>
+                <div class="checkbox-group">
+                    <label
+                        ><input type="checkbox" id="vitD3" class="supplement" />
+                        Вітамін D3</label
+                    >
+                    <label
+                        ><input
+                            type="checkbox"
+                            id="omega3"
+                            class="supplement"
+                        />
+                        Омега-3</label
+                    >
+                    <label
+                        ><input
+                            type="checkbox"
+                            id="magnesium"
+                            class="supplement"
+                        />
+                        Магній хелат</label
+                    >
+                    <label
+                        ><input type="checkbox" id="ashwa" class="supplement" />
+                        Ашваганда</label
+                    >
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>📉 Контроль ваги</h2>
+                <div class="weight-group">
+                    <input
+                        type="number"
+                        id="weightInput"
+                        placeholder="Поточна вага (кг)"
+                        step="0.1"
+                    />
+                    <span class="target-badge">Ціль: 85 кг</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>📝 Нотатки дня</h2>
+                <textarea
+                    id="dayNotes"
+                    placeholder="Яке тренування виконав? Що з'їв на обід/вечерю?"
+                ></textarea>
+            </section>
+
+            <button id="saveBtn" class="primary-btn">
+                Зберегти дані в браузері
+            </button>
+            <p id="statusMsg" class="hidden">Дані успішно оновлено! 👍</p>
+        </div>
+
+        <script src="script.js"></script>
+    </body>
+</html>
