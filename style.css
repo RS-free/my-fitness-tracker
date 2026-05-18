@@ -1,44 +1,44 @@
 :root {
-    /* СВІТЛА ТЕМА (Ефект світлого матового скла) */
-    --bg-start: #f8fafc;
-    --bg-end: #e2e8f0;
-    --card: rgba(255, 255, 255, 0.7);
-    --card-border: rgba(255, 255, 255, 0.5);
-    --text-primary: #1e293b;
-    --text-secondary: #64748b;
-    --accent: #0ea5e9;
-    --accent-strong: #0284c7;
+    /* СВІТЛА ТЕМА */
+    --bg-start: #f1f5f9;
+    --bg-end: #cbd5e1;
+    --card: rgba(255, 255, 255, 0.75);
+    --card-border: rgba(255, 255, 255, 0.6);
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent: #0284c7;
+    --accent-strong: #0369a1;
     --danger: #ef4444;
     --success: #10b981;
-    --shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    --shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
     --radius: 24px;
     --input-bg: rgba(255, 255, 255, 0.9);
     --theme-btn-bg: rgba(255, 255, 255, 0.9);
-    --water-btn-bg: rgba(14, 165, 233, 0.15);
-    --water-btn-hover: rgba(14, 165, 233, 0.3);
-    --checkbox-bg: rgba(148, 163, 184, 0.15);
-    --badge-bg: rgba(14, 165, 233, 0.16);
+    --water-btn-bg: rgba(14, 165, 233, 0.12);
+    --water-btn-hover: rgba(14, 165, 233, 0.25);
+    --checkbox-bg: rgba(148, 163, 184, 0.12);
+    --badge-bg: rgba(14, 165, 233, 0.15);
 }
 
 .dark-mode {
-    /* ТЕМНА ТЕМА (Преміальний дизайн від ШІ) */
+    /* ТЕМНА ТЕМА */
     --bg-start: #0f172a;
     --bg-end: #1e293b;
-    --card: rgba(15, 23, 42, 0.88);
-    --card-border: rgba(148, 163, 184, 0.18);
-    --text-primary: #e2e8f0;
+    --card: rgba(15, 23, 42, 0.65);
+    --card-border: rgba(148, 163, 184, 0.12);
+    --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --accent: #38bdf8;
     --accent-strong: #7dd3fc;
-    --danger: #ef4444;
+    --danger: #f87171;
     --success: #34d399;
-    --shadow: 0 30px 80px rgba(15, 23, 42, 0.35);
-    --input-bg: rgba(15, 23, 42, 0.95);
-    --theme-btn-bg: rgba(15, 23, 42, 0.96);
-    --water-btn-bg: rgba(56, 189, 248, 0.15);
-    --water-btn-hover: rgba(56, 189, 248, 0.3);
-    --checkbox-bg: rgba(148, 163, 184, 0.06);
-    --badge-bg: rgba(56, 189, 248, 0.16);
+    --shadow: 0 30px 80px rgba(15, 23, 42, 0.5);
+    --input-bg: rgba(15, 23, 42, 0.8);
+    --theme-btn-bg: rgba(15, 23, 42, 0.9);
+    --water-btn-bg: rgba(56, 189, 248, 0.12);
+    --water-btn-hover: rgba(56, 189, 248, 0.25);
+    --checkbox-bg: rgba(148, 163, 184, 0.05);
+    --badge-bg: rgba(56, 189, 248, 0.15);
 }
 
 * {
@@ -53,10 +53,11 @@ body {
     background:
         radial-gradient(
             circle at top,
-            rgba(56, 189, 248, 0.12),
-            transparent 25%
+            rgba(56, 189, 248, 0.1),
+            transparent 35%
         ),
         linear-gradient(180deg, var(--bg-start), var(--bg-end));
+    background-attachment: fixed;
     transition:
         background 0.4s ease,
         color 0.4s ease;
@@ -70,18 +71,15 @@ textarea {
 }
 
 .container {
-    width: min(1080px, calc(100% - 2rem));
-    margin: 2.4rem auto 3rem;
+    width: min(1140px, calc(100% - 2rem));
+    margin: 2rem auto 3rem;
     padding: 2rem;
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    backdrop-filter: blur(18px);
-    transition:
-        background 0.4s ease,
-        border-color 0.4s ease,
-        box-shadow 0.4s ease;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
 }
 
 .theme-toggle-container {
@@ -93,10 +91,11 @@ textarea {
 .theme-btn {
     border: 1px solid var(--card-border);
     border-radius: 999px;
-    padding: 0.8rem 1.2rem;
+    padding: 0.7rem 1.2rem;
     background: var(--theme-btn-bg);
     color: var(--text-secondary);
     cursor: pointer;
+    font-weight: 500;
     transition:
         transform 0.2s ease,
         background 0.3s ease,
@@ -109,27 +108,92 @@ textarea {
     color: var(--text-primary);
 }
 
-h1 {
-    margin: 0 0 1.4rem;
-    font-size: clamp(2.2rem, 3vw, 3rem);
-    letter-spacing: -0.04em;
+/* СТИЛІ БАНЕРА МОТИВАЦІЇ */
+.motivation-card {
+    position: relative;
+    height: 200px;
+    border-radius: 20px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    padding: 2.5rem !important;
+    margin-bottom: 2rem;
+    border: none;
+    transition: background-image 0.5s ease;
+}
+
+.motivation-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        rgba(15, 23, 42, 0.85) 0%,
+        rgba(15, 23, 42, 0.4) 100%
+    );
+    z-index: 1;
+}
+
+.motivation-content {
+    position: relative;
+    z-index: 2;
+    color: #f8fafc;
+    max-width: 80%;
+}
+
+.motivation-content h1 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.8rem, 2.5vw, 2.4rem);
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#quoteText {
+    margin: 0;
+    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-style: italic;
+    color: #cbd5e1;
+    line-height: 1.4;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* НАЛАШТУВАННЯ СІТКИ GRID */
+.main-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.grid-column {
+    display: flex;
+    flex-direction: column;
 }
 
 .card {
     background: var(--card);
     border: 1px solid var(--card-border);
-    border-radius: 22px;
+    border-radius: 20px;
     padding: 1.6rem;
-    margin-bottom: 1.4rem;
-    transition:
-        background 0.4s ease,
-        border-color 0.4s ease;
+    margin-bottom: 0; /* Контролюється сіткою */
+    flex-grow: 1;
+}
+
+.grid-column .card:not(:last-child) {
+    margin-bottom: 1.5rem;
 }
 
 .card h2 {
     margin-top: 0;
-    margin-bottom: 1rem;
-    font-size: 1.15rem;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     color: var(--accent-strong);
 }
 
@@ -139,15 +203,14 @@ textarea,
 input[type='number'] {
     width: 100%;
     border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 0.95rem 1rem;
+    border-radius: 14px;
+    padding: 0.9rem 1rem;
     background: var(--input-bg);
     color: var(--text-primary);
     outline: none;
     transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.4s ease;
+        box-shadow 0.2s ease;
 }
 
 input[type='date']:focus,
@@ -159,35 +222,45 @@ input[type='number']:focus {
 }
 
 textarea {
-    min-height: 140px;
-    resize: vertical;
+    height: 100%;
+    min-height: 120px;
+    resize: none;
 }
 
+/* ВОДА */
 .water-tracker {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.2rem;
 }
 
 .water-tracker button {
-    width: 3rem;
-    height: 3rem;
+    width: 3.2rem;
+    height: 3.2rem;
     border: none;
     border-radius: 50%;
     background: var(--water-btn-bg);
     color: var(--text-primary);
     cursor: pointer;
-    font-size: 1.4rem;
-    transition: background 0.2s ease;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition:
+        background 0.2s ease,
+        transform 0.1s ease;
 }
 
 .water-tracker button:hover {
     background: var(--water-btn-hover);
 }
+.water-tracker button:active {
+    transform: scale(0.95);
+}
 
 #waterCount {
-    font-size: 1.8rem;
+    font-size: 2.2rem;
+    font-weight: 800;
     min-width: 3rem;
     text-align: center;
 }
@@ -198,6 +271,7 @@ textarea {
     background: var(--checkbox-bg);
     border-radius: 999px;
     overflow: hidden;
+    margin-bottom: 0.8rem;
 }
 
 .progress-bar {
@@ -210,13 +284,16 @@ textarea {
 
 .target-info,
 .weight-left-info {
-    margin: 0.85rem 0 0;
+    margin: 0;
+    text-align: center;
     color: var(--text-secondary);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
 
+/* ДОБАВКИ СІТКОЮ */
 .checkbox-group {
     display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.75rem;
 }
 
@@ -224,12 +301,17 @@ textarea {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.9rem 1rem;
-    border-radius: 16px;
+    padding: 0.85rem 1rem;
+    border-radius: 14px;
     background: var(--checkbox-bg);
     cursor: pointer;
     color: var(--text-primary);
-    transition: background 0.3s ease;
+    font-size: 0.95rem;
+    transition: background 0.2s ease;
+}
+
+.checkbox-group label:hover {
+    background: var(--water-btn-bg);
 }
 
 .checkbox-group input {
@@ -238,36 +320,45 @@ textarea {
     accent-color: var(--accent);
 }
 
+/* ВАГА */
 .weight-group {
-    display: grid;
-    gap: 0.9rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
 }
 
 .target-badge {
-    align-self: center;
-    display: inline-flex;
-    justify-content: center;
-    padding: 0.55rem 0.85rem;
-    border-radius: 999px;
+    padding: 0.85rem 1.2rem;
+    border-radius: 14px;
     background: var(--badge-bg);
     color: var(--accent-strong);
-    font-size: 0.95rem;
+    font-weight: bold;
+    white-space: nowrap;
 }
 
+.weight-left-info {
+    margin-top: 1rem;
+    text-align: left;
+    font-weight: 700;
+    color: var(--success);
+}
+
+/* КНОПКИ ДІЙ */
 .action-buttons {
     display: flex;
     gap: 1rem;
-    flex-wrap: wrap;
-    margin: 0.5rem 0 1rem;
+    margin: 1.5rem 0;
 }
 
 .primary-btn,
 .danger-btn {
+    flex: 1;
     border: none;
     border-radius: 16px;
-    padding: 0.95rem 1.3rem;
+    padding: 1.1rem;
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.05rem;
     transition:
         transform 0.2s ease,
         filter 0.2s ease;
@@ -275,70 +366,91 @@ textarea {
 
 .primary-btn {
     background: linear-gradient(135deg, var(--accent), #0ea5e9);
-    color: #fff;
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.25);
 }
 
 .danger-btn {
-    background: var(--danger);
-    color: #fff;
+    background: rgba(248, 113, 113, 0.15);
+    color: var(--danger);
+    border: 1px solid rgba(248, 113, 113, 0.2);
 }
 
 .primary-btn:hover,
 .danger-btn:hover {
-    transform: translateY(-1px);
-    filter: brightness(1.1);
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+.primary-btn:active,
+.danger-btn:active {
+    transform: translateY(0);
 }
 
 #statusMsg {
-    margin: 0;
-    padding: 0.9rem 1rem;
-    border-radius: 16px;
+    margin: 0 0 1.5rem;
+    padding: 1rem;
+    border-radius: 14px;
     background: rgba(16, 185, 129, 0.15);
     color: var(--success);
-    border: 1px solid rgba(16, 185, 129, 0.25);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    text-align: center;
+    font-weight: bold;
 }
 
-.hidden {
-    display: none;
+/* ІСТОРІЯ */
+.history-card {
+    margin-top: 1.5rem;
 }
 
 .history-card #historyLog {
     display: grid;
     gap: 1rem;
-    min-height: 120px;
-}
-
-.empty-history {
-    margin: 0;
-    color: var(--text-secondary);
-    font-style: italic;
 }
 
 .history-item {
-    padding: 12px;
-    border-bottom: 1px solid var(--card-border);
-    font-size: 0.95rem;
-}
-
-.history-item:last-child {
-    border-bottom: none;
+    padding: 1.2rem;
+    background: var(--checkbox-bg);
+    border-radius: 14px;
+    border: 1px solid var(--card-border);
 }
 
 .history-date {
-    font-weight: bold;
+    font-weight: 800;
     color: var(--accent);
-    margin-bottom: 5px;
+    margin-bottom: 0.4rem;
+    font-size: 1rem;
 }
 
-@media (max-width: 720px) {
+.empty-history {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 2rem 0;
+}
+
+/* АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ (МЕНШЕ 768px) */
+@media (max-width: 768px) {
     .container {
-        padding: 1.4rem;
+        padding: 1.2rem;
+        margin: 1rem auto;
     }
-    .water-tracker {
-        flex-wrap: wrap;
-        justify-content: center;
+    .main-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .checkbox-group {
+        grid-template-columns: 1fr;
     }
     .action-buttons {
         flex-direction: column;
+        gap: 0.75rem;
     }
+    .motivation-card {
+        height: 160px;
+        padding: 1.2rem !important;
+    }
+    .grid-column .card:not(:last-child) {
+        margin-bottom: 0;
+    } /* Відступи бере на себе grid-gap */
 }

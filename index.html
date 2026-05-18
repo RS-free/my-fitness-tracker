@@ -14,87 +14,113 @@
                 </button>
             </div>
 
-            <h1>Мій Фітнес Щоденник</h1>
-
-            <section class="card date-card">
-                <h2>📅 Дата запису</h2>
-                <input type="date" id="dateSelect" />
-            </section>
-
-            <section class="card">
-                <h2>🏋️ Програма на сьогодні</h2>
-                <select id="programDaySelect">
-                    <option value="Відпочинок">Відпочинок & Відновлення</option>
-                    <option value="День 1: Груди + Трицепс">
-                        День 1: Груди + Трицепс (Субота)
-                    </option>
-                    <option value="День 2: Спина + Біцепс">
-                        День 2: Спина + Біцепс (Неділя)
-                    </option>
-                    <option value="День 3: Активне схуднення">
-                        День 3: Активне схуднення (Понеділок)
-                    </option>
-                    <option value="День 4: Плечі + Руки">
-                        День 4: Плечі + Руки (Середа)
-                    </option>
-                    <option value="День 5: Безпечні ноги">
-                        День 5: Безпечні ноги (Четвер)
-                    </option>
-                </select>
-            </section>
-
-            <section class="card">
-                <h2>💧 Вода (склянки)</h2>
-                <div class="water-tracker">
-                    <button id="btnMinus">-</button>
-                    <span id="waterCount">0</span>
-                    <button id="btnPlus">+</button>
-                </div>
-                <div class="progress-container">
-                    <div id="waterProgress" class="progress-bar"></div>
-                </div>
-                <p class="target-info">Ціль: 12 склянок (3 літри)</p>
-            </section>
-
-            <section class="card">
-                <h2>💊 Вітаміни та добавки</h2>
-                <div class="checkbox-group">
-                    <label
-                        ><input type="checkbox" id="vitD3" /> Вітамін D3</label
-                    >
-                    <label><input type="checkbox" id="omega3" /> Омега-3</label>
-                    <label
-                        ><input type="checkbox" id="magnesium" /> Магній
-                        хелат</label
-                    >
-                    <label
-                        ><input type="checkbox" id="ashwa" /> Ашваганда</label
-                    >
+            <section class="card motivation-card" id="motivationCard">
+                <div class="motivation-overlay"></div>
+                <div class="motivation-content">
+                    <h1 id="appTitle">Мій Фітнес Щоденник</h1>
+                    <p id="quoteText">"Завантаження мотивації..."</p>
                 </div>
             </section>
 
-            <section class="card">
-                <h2>📉 Контроль ваги</h2>
-                <div class="weight-group">
-                    <input
-                        type="number"
-                        id="weightInput"
-                        placeholder="Поточна вага (кг)"
-                        step="0.1"
-                    />
-                    <span class="target-badge">Ціль: 85 кг</span>
+            <div class="main-grid">
+                <div class="grid-column">
+                    <section class="card">
+                        <h2>📅 Дата запису</h2>
+                        <input type="date" id="dateSelect" />
+                    </section>
+
+                    <section class="card">
+                        <h2>🏋️ Програма на сьогодні</h2>
+                        <select id="programDaySelect">
+                            <option value="Відпочинок">
+                                Відпочинок & Відновлення
+                            </option>
+                            <option value="День 1: Груди + Трицепс">
+                                День 1: Груди + Трицепс (Субота)
+                            </option>
+                            <option value="День 2: Спина + Біцепс">
+                                День 2: Спина + Біцепс (Неділя)
+                            </option>
+                            <option value="День 3: Активне схуднення">
+                                День 3: Активне схуднення (Понеділок)
+                            </option>
+                            <option value="День 4: Плечі + Руки">
+                                День 4: Плечі + Руки (Середа)
+                            </option>
+                            <option value="День 5: Безпечні ноги">
+                                День 5: Безпечні ноги (Четвер)
+                            </option>
+                        </select>
+                    </section>
+
+                    <section class="card">
+                        <h2>📝 Харчування та нотатки</h2>
+                        <textarea
+                            id="dayNotes"
+                            placeholder="Опиши самопочуття, що з'їв, які робочі ваги взяв..."
+                        ></textarea>
+                    </section>
                 </div>
-                <p id="weightLeft" class="weight-left-info"></p>
-            </section>
 
-            <section class="card">
-                <h2>📝 Харчування та нотатки</h2>
-                <textarea
-                    id="dayNotes"
-                    placeholder="Опиши самопочуття, що з'їв, які робочі ваги взяв..."
-                ></textarea>
-            </section>
+                <div class="grid-column">
+                    <section class="card">
+                        <h2>💧 Вода (склянки)</h2>
+                        <div class="water-tracker">
+                            <button id="btnMinus">-</button>
+                            <span id="waterCount">0</span>
+                            <button id="btnPlus">+</button>
+                        </div>
+                        <div class="progress-container">
+                            <div id="waterProgress" class="progress-bar"></div>
+                        </div>
+                        <p class="target-info">Ціль: 12 склянок (3 літри)</p>
+                    </section>
 
+                    <section class="card">
+                        <h2>💊 Вітаміни та добавки</h2>
+                        <div class="checkbox-group">
+                            <label
+                                ><input type="checkbox" id="vitD3" /> Вітамін
+                                D3</label
+                            >
+                            <label
+                                ><input type="checkbox" id="omega3" />
+                                Омега-3</label
+                            >
+                            <label
+                                ><input type="checkbox" id="magnesium" /> Магній
+                                хелат</label
+                            >
+                            <label
+                                ><input type="checkbox" id="ashwa" />
+                                Ашваганда</label
+                            >
+                            <label
+                                ><input type="checkbox" id="lcarnitine" />
+                                L-карнітин</label
+                            >
+                            <label
+                                ><input type="checkbox" id="vitB" /> Вітаміни
+                                групи B</label
+                            >
+                        </div>
+                    </section>
+
+                    <section class="card">
+                        <h2>📉 Контроль ваги</h2>
+                        <div class="weight-group">
+                            <input
+                                type="number"
+                                id="weightInput"
+                                placeholder="Поточна вага (кг)"
+                                step="0.1"
+                            />
+                            <span class="target-badge">Ціль: 85Base кг</span>
+                        </div>
+                        <p id="weightLeft" class="weight-left-info"></p>
+                    </section>
+                </div>
+            </div>
             <div class="action-buttons">
                 <button id="saveBtn" class="primary-btn">Зберегти день</button>
                 <button id="resetBtn" class="danger-btn">
@@ -107,7 +133,7 @@
                 <h2>📜 Історія твоїх досягнень</h2>
                 <div id="historyLog">
                     <p class="empty-history">
-                        Тут з'являться твої попередні дні...
+                        Тут будуть твої збережені дні...
                     </p>
                 </div>
             </section>
