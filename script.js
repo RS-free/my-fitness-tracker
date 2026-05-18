@@ -89,7 +89,7 @@ function loadDayData() {
         weightInput.value = dayData.weight || '';
         dayNotes.value = dayData.notes || '';
     } else {
-        // Якщо даних для дня немає — підтягуємо лише останню вагу для зручності, інше обнуляємо
+        // Якщо даних для дня немає — підтягуємо лише останню вагу, інше обнуляємо
         programDaySelect.value = 'Відпочинок';
         currentWater = 0;
         vitD3.checked = false;
@@ -98,7 +98,6 @@ function loadDayData() {
         ashwa.checked = false;
         dayNotes.value = '';
         
-        // Знаходимо останню зафіксовану вагу в історії, щоб не вводити заново
         const dates = Object.keys(masterData).sort();
         if (dates.length > 0) {
             weightInput.value = masterData[dates[dates.length - 1]].weight || '';
@@ -135,7 +134,7 @@ saveBtn.addEventListener('click', () => {
     };
 
     saveMasterData(masterData);
-    loadDayData(); // Перезавантажуємо, щоб оновити все
+    loadDayData(); 
 
     statusMsg.classList.remove('hidden');
     setTimeout(() => statusMsg.classList.add('hidden'), 2000);
@@ -155,10 +154,10 @@ resetBtn.addEventListener('click', () => {
 // 9. Генерація списку історії на екрані
 function renderHistoryList() {
     const masterData = getMasterData();
-    const sortedDates = Object.keys(masterData).sort().reverse(); // Свіжі дні зверху
+    const sortedDates = Object.keys(masterData).sort().reverse(); 
 
     if (sortedDates.length === 0) {
-        historyLog.innerHTML = '<p class="empty-history">Тут з'являться твої попередні дні...</p>';
+        historyLog.innerHTML = `<p class="empty-history">Тут з'являться твої попередні дні...</p>`;
         return;
     }
 
@@ -172,12 +171,4 @@ function renderHistoryList() {
         item.innerHTML = `
             <div class="history-date">${formattedDate}</div>
             <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'} | <strong>Вага:</strong> ${day.weight ? day.weight + ' кг' : 'не вказано'}</div>
-            <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${[day.vitD3?'D3':'', day.omega3?'Омега-3':'', day.magnesium?'Магній':'', day.ashwa?'Ашваганда':''].filter(Boolean).join(', ') || 'не відмічено'}</div>
-            ${day.notes ? `<div>📝 <em>${day.notes}</em></div>` : ''}
-        `;
-        historyLog.appendChild(item);
-    });
-}
-
-// Первинний запуск при завантаженні сторінки
-loadDayData();
+            <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${[day.vitD3?'D3':'', day.omega3?'Омега-3':'', day.magnesium?'
