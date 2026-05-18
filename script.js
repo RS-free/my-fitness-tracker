@@ -1,5 +1,8 @@
-// Зв'язуємо змінні елементів з HTML структурою
+// Селектори елементів
+const dateSelect = document.getElementById('dateSelect');
+const programDaySelect = document.getElementById('programDaySelect');
 const waterCountEl = document.getElementById('waterCount');
+const waterProgressBar = document.getElementById('waterProgress');
 const btnMinus = document.getElementById('btnMinus');
 const btnPlus = document.getElementById('btnPlus');
 const vitD3 = document.getElementById('vitD3');
@@ -7,58 +10,174 @@ const omega3 = document.getElementById('omega3');
 const magnesium = document.getElementById('magnesium');
 const ashwa = document.getElementById('ashwa');
 const weightInput = document.getElementById('weightInput');
+const weightLeft = document.getElementById('weightLeft');
 const dayNotes = document.getElementById('dayNotes');
 const saveBtn = document.getElementById('saveBtn');
+const resetBtn = document.getElementById('resetBtn');
 const statusMsg = document.getElementById('statusMsg');
+const historyLog = document.getElementById('historyLog');
+const themeToggle = document.getElementById('themeToggle');
 
-let water = 0;
+// Поточна робоча змінна для води на обраний день
+let currentWater = 0;
+const WATER_TARGET = 12; // 12 склянок ціль
 
-// Автоматичне завантаження даних, які користувач вводив раніше
-function loadDataFromStorage() {
-    const savedWater = localStorage.getItem('fit_water');
-    if (savedWater) {
-        water = parseInt(savedWater);
-        waterCountEl.textContent = water;
-    }
+// 1. Налаштування поточної дати (сьогодні) за замовчуванням
+const today = new Date().toISOString().split('T')[0];
+dateSelect.value = today;
 
-    vitD3.checked = localStorage.getItem('fit_vitD3') === 'true';
-    omega3.checked = localStorage.getItem('fit_omega3') === 'true';
-    magnesium.checked = localStorage.getItem('fit_magnesium') === 'true';
-    ashwa.checked = localStorage.getItem('fit_ashwa') === 'true';
-
-    weightInput.value = localStorage.getItem('fit_weight') || '';
-    dayNotes.value = localStorage.getItem('fit_notes') || '';
+// 2. Логіка Темної Теми
+if (localStorage.getItem('fit_theme') === 'dark') {
+    document.body.classList.add('dark-mode');
+    themeToggle.textContent = '☀️ Світла тема';
 }
 
-// Логіка збільшення/зменшення склянок води
-btnPlus.addEventListener('click', () => {
-    water++;
-    waterCountEl.textContent = water;
-});
-
-btnMinus.addEventListener('click', () => {
-    if (water > 0) {
-        water--;
-        waterCountEl.textContent = water;
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    if (document.body.classList.contains('dark-mode')) {
+        localStorage.setItem('fit_theme', 'dark');
+        themeToggle.textContent = '☀️ Світла тема';
+    } else {
+        localStorage.setItem('fit_theme', 'light');
+        themeToggle.textContent = '🌙 Темна тема';
     }
 });
 
-// Логіка збереження всього прогресу за допомогою Local Storage
-saveBtn.addEventListener('click', () => {
-    localStorage.setItem('fit_water', water);
-    localStorage.setItem('fit_vitD3', vitD3.checked);
-    localStorage.setItem('fit_omega3', omega3.checked);
-    localStorage.setItem('fit_magnesium', magnesium.checked);
-    localStorage.setItem('fit_ashwa', ashwa.checked);
-    localStorage.setItem('fit_weight', weightInput.value);
-    localStorage.setItem('fit_notes', dayNotes.value);
+// 3. Робота з базою даних (Глобальний об'єкт історії в localStorage)
+function getMasterData() {
+    return JSON.parse(localStorage.getItem('fit_master_history')) || {};
+}
 
-    // Візуальне повідомлення про успішне збереження
+function saveMasterData(data) {
+    localStorage.setItem('fit_master_history', JSON.stringify(data));
+}
+
+// 4. Оновлення візуального прогресу води
+function updateWaterUI() {
+    waterCountEl.textContent = currentWater;
+    const percentage = Math.min((currentWater / WATER_TARGET) * 100, 100);
+    waterProgressBar.style.width = `${percentage}%`;
+}
+
+// 5. Розрахунок ваги до цілі (85 кг)
+function updateWeightTargetUI() {
+    const currentWeight = parseFloat(weightInput.value);
+    if (currentWeight && currentWeight > 85) {
+        const left = (currentWeight - 85).toFixed(1);
+        weightLeft.textContent = `🎯 Залишилося скинути: ${left} кг`;
+    } else if (currentWeight && currentWeight <= 85) {
+        weightLeft.textContent = `🎉 Ціль досягнута або ти вже мега-атлет!`;
+    } else {
+        weightLeft.textContent = '';
+    }
+}
+weightInput.addEventListener('input', updateWeightTargetUI);
+
+// 6. Завантаження даних для обраної дати
+function loadDayData() {
+    const selectedDate = dateSelect.value;
+    const masterData = getMasterData();
+    const dayData = masterData[selectedDate] || null;
+
+    if (dayData) {
+        programDaySelect.value = dayData.programDay || 'Відпочинок';
+        currentWater = dayData.water || 0;
+        vitD3.checked = dayData.vitD3 || false;
+        omega3.checked = dayData.omega3 || false;
+        magnesium.checked = dayData.magnesium || false;
+        ashwa.checked = dayData.ashwa || false;
+        weightInput.value = dayData.weight || '';
+        dayNotes.value = dayData.notes || '';
+    } else {
+        // Якщо даних для дня немає — підтягуємо лише останню вагу для зручності, інше обнуляємо
+        programDaySelect.value = 'Відпочинок';
+        currentWater = 0;
+        vitD3.checked = false;
+        omega3.checked = false;
+        magnesium.checked = false;
+        ashwa.checked = false;
+        dayNotes.value = '';
+        
+        // Знаходимо останню зафіксовану вагу в історії, щоб не вводити заново
+        const dates = Object.keys(masterData).sort();
+        if (dates.length > 0) {
+            weightInput.value = masterData[dates[dates.length - 1]].weight || '';
+        } else {
+            weightInput.value = '';
+        }
+    }
+    updateWaterUI();
+    updateWeightTargetUI();
+    renderHistoryList();
+}
+
+// Події зміни дати
+dateSelect.addEventListener('change', loadDayData);
+
+// Кнопки води
+btnPlus.addEventListener('click', () => { currentWater++; updateWaterUI(); });
+btnMinus.addEventListener('click', () => { if (currentWater > 0) { currentWater--; updateWaterUI(); } });
+
+// 7. Збереження поточної дати
+saveBtn.addEventListener('click', () => {
+    const selectedDate = dateSelect.value;
+    const masterData = getMasterData();
+
+    masterData[selectedDate] = {
+        programDay: programDaySelect.value,
+        water: currentWater,
+        vitD3: vitD3.checked,
+        omega3: omega3.checked,
+        magnesium: magnesium.checked,
+        ashwa: ashwa.checked,
+        weight: weightInput.value,
+        notes: dayNotes.value
+    };
+
+    saveMasterData(masterData);
+    loadDayData(); // Перезавантажуємо, щоб оновити все
+
     statusMsg.classList.remove('hidden');
-    setTimeout(() => {
-        statusMsg.classList.add('hidden');
-    }, 2500);
+    setTimeout(() => statusMsg.classList.add('hidden'), 2000);
 });
 
-// Запускаємо читання пам'яті при кожному старті сторінки
-loadDataFromStorage();
+// 8. Кнопка очищення (скидання) дня
+resetBtn.addEventListener('click', () => {
+    if (confirm('Очистити всі записи за цей день?')) {
+        const selectedDate = dateSelect.value;
+        const masterData = getMasterData();
+        delete masterData[selectedDate];
+        saveMasterData(masterData);
+        loadDayData();
+    }
+});
+
+// 9. Генерація списку історії на екрані
+function renderHistoryList() {
+    const masterData = getMasterData();
+    const sortedDates = Object.keys(masterData).sort().reverse(); // Свіжі дні зверху
+
+    if (sortedDates.length === 0) {
+        historyLog.innerHTML = '<p class="empty-history">Тут з'являться твої попередні дні...</p>';
+        return;
+    }
+
+    historyLog.innerHTML = '';
+    sortedDates.forEach(date => {
+        const day = masterData[date];
+        const formattedDate = new Date(date).toLocaleDateString('uk-UA', { day: 'numeric', month: 'long' });
+        
+        const item = document.createElement('div');
+        item.className = 'history-item';
+        item.innerHTML = `
+            <div class="history-date">${formattedDate}</div>
+            <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'} | <strong>Вага:</strong> ${day.weight ? day.weight + ' кг' : 'не вказано'}</div>
+            <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${[day.vitD3?'D3':'', day.omega3?'Омега-3':'', day.magnesium?'Магній':'', day.ashwa?'Ашваганда':''].filter(Boolean).join(', ') || 'не відмічено'}</div>
+            ${day.notes ? `<div>📝 <em>${day.notes}</em></div>` : ''}
+        `;
+        historyLog.appendChild(item);
+    });
+}
+
+// Первинний запуск при завантаженні сторінки
+loadDayData();
