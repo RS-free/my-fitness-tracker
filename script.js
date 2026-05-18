@@ -20,7 +20,7 @@ const themeToggle = document.getElementById('themeToggle');
 
 // Поточна робоча змінна для води на обраний день
 let currentWater = 0;
-const WATER_TARGET = 12; // 12 склянок ціль
+const WATER_TARGET = 12;
 
 // 1. Налаштування поточної дати (сьогодні) за замовчуванням
 const today = new Date().toISOString().split('T')[0];
@@ -43,7 +43,7 @@ themeToggle.addEventListener('click', () => {
     }
 });
 
-// 3. Робота з базою даних (Глобальний об'єкт історії в localStorage)
+// 3. Робота з базою даних
 function getMasterData() {
     return JSON.parse(localStorage.getItem('fit_master_history')) || {};
 }
@@ -66,7 +66,7 @@ function updateWeightTargetUI() {
         const left = (currentWeight - 85).toFixed(1);
         weightLeft.textContent = `🎯 Залишилося скинути: ${left} кг`;
     } else if (currentWeight && currentWeight <= 85) {
-        weightLeft.textContent = `🎉 Ціль досягнута або ти вже мега-атлет!`;
+        weightLeft.textContent = `🎉 Ціль досягнута!`;
     } else {
         weightLeft.textContent = '';
     }
@@ -89,7 +89,6 @@ function loadDayData() {
         weightInput.value = dayData.weight || '';
         dayNotes.value = dayData.notes || '';
     } else {
-        // Якщо даних для дня немає — підтягуємо лише останню вагу, інше обнуляємо
         programDaySelect.value = 'Відпочинок';
         currentWater = 0;
         vitD3.checked = false;
@@ -97,10 +96,11 @@ function loadDayData() {
         magnesium.checked = false;
         ashwa.checked = false;
         dayNotes.value = '';
-        
+
         const dates = Object.keys(masterData).sort();
         if (dates.length > 0) {
-            weightInput.value = masterData[dates[dates.length - 1]].weight || '';
+            weightInput.value =
+                masterData[dates[dates.length - 1]].weight || '';
         } else {
             weightInput.value = '';
         }
@@ -110,12 +110,18 @@ function loadDayData() {
     renderHistoryList();
 }
 
-// Події зміни дати
 dateSelect.addEventListener('change', loadDayData);
 
-// Кнопки води
-btnPlus.addEventListener('click', () => { currentWater++; updateWaterUI(); });
-btnMinus.addEventListener('click', () => { if (currentWater > 0) { currentWater--; updateWaterUI(); } });
+btnPlus.addEventListener('click', () => {
+    currentWater++;
+    updateWaterUI();
+});
+btnMinus.addEventListener('click', () => {
+    if (currentWater > 0) {
+        currentWater--;
+        updateWaterUI();
+    }
+});
 
 // 7. Збереження поточної дати
 saveBtn.addEventListener('click', () => {
@@ -130,17 +136,17 @@ saveBtn.addEventListener('click', () => {
         magnesium: magnesium.checked,
         ashwa: ashwa.checked,
         weight: weightInput.value,
-        notes: dayNotes.value
+        notes: dayNotes.value,
     };
 
     saveMasterData(masterData);
-    loadDayData(); 
+    loadDayData();
 
     statusMsg.classList.remove('hidden');
     setTimeout(() => statusMsg.classList.add('hidden'), 2000);
 });
 
-// 8. Кнопка очищення (скидання) дня
+// 8. Кнопка очищення
 resetBtn.addEventListener('click', () => {
     if (confirm('Очистити всі записи за цей день?')) {
         const selectedDate = dateSelect.value;
@@ -151,24 +157,46 @@ resetBtn.addEventListener('click', () => {
     }
 });
 
-// 9. Генерація списку історії на екрані
+// 9. Генерація списку історії
 function renderHistoryList() {
     const masterData = getMasterData();
-    const sortedDates = Object.keys(masterData).sort().reverse(); 
+    const sortedDates = Object.keys(masterData).sort().reverse();
 
     if (sortedDates.length === 0) {
-        historyLog.innerHTML = `<p class="empty-history">Тут з'являться твої попередні дні...</p>`;
+        historyLog.innerHTML =
+            '<p class="empty-history">Тут будуть твої збережені дні...</p>';
         return;
     }
 
     historyLog.innerHTML = '';
-    sortedDates.forEach(date => {
+    sortedDates.forEach((date) => {
         const day = masterData[date];
-        const formattedDate = new Date(date).toLocaleDateString('uk-UA', { day: 'numeric', month: 'long' });
-        
+        const formattedDate = new Date(date).toLocaleDateString('uk-UA', {
+            day: 'numeric',
+            month: 'long',
+        });
+
         const item = document.createElement('div');
         item.className = 'history-item';
+
+        // Формуємо список добавок безпечно
+        let supplements = [];
+        if (day.vitD3) supplements.push('D3');
+        if (day.omega3) supplements.push('Омега-3');
+        if (day.magnesium) supplements.push('Магній');
+        if (day.ashwa) supplements.push('Ашваганда');
+        let suppsText =
+            supplements.length > 0 ? supplements.join(', ') : 'не відмічено';
+
         item.innerHTML = `
             <div class="history-date">${formattedDate}</div>
             <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'} | <strong>Вага:</strong> ${day.weight ? day.weight + ' кг' : 'не вказано'}</div>
-            <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${[day.vitD3?'D3':'', day.omega3?'Омега-3':'', day.magnesium?'
+            <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${suppsText}</div>
+            ${day.notes ? `<div>📝 <em>${day.notes}</em></div>` : ''}
+        `;
+        historyLog.appendChild(item);
+    });
+}
+
+// Запуск
+loadDayData();
