@@ -1,4 +1,27 @@
 :root {
+    /* СВІТЛА ТЕМА (Ефект світлого матового скла) */
+    --bg-start: #f8fafc;
+    --bg-end: #e2e8f0;
+    --card: rgba(255, 255, 255, 0.7);
+    --card-border: rgba(255, 255, 255, 0.5);
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent: #0ea5e9;
+    --accent-strong: #0284c7;
+    --danger: #ef4444;
+    --success: #10b981;
+    --shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    --radius: 24px;
+    --input-bg: rgba(255, 255, 255, 0.9);
+    --theme-btn-bg: rgba(255, 255, 255, 0.9);
+    --water-btn-bg: rgba(14, 165, 233, 0.15);
+    --water-btn-hover: rgba(14, 165, 233, 0.3);
+    --checkbox-bg: rgba(148, 163, 184, 0.15);
+    --badge-bg: rgba(14, 165, 233, 0.16);
+}
+
+.dark-mode {
+    /* ТЕМНА ТЕМА (Преміальний дизайн від ШІ) */
     --bg-start: #0f172a;
     --bg-end: #1e293b;
     --card: rgba(15, 23, 42, 0.88);
@@ -7,10 +30,15 @@
     --text-secondary: #94a3b8;
     --accent: #38bdf8;
     --accent-strong: #7dd3fc;
-    --danger: #f87171;
+    --danger: #ef4444;
     --success: #34d399;
     --shadow: 0 30px 80px rgba(15, 23, 42, 0.35);
-    --radius: 24px;
+    --input-bg: rgba(15, 23, 42, 0.95);
+    --theme-btn-bg: rgba(15, 23, 42, 0.96);
+    --water-btn-bg: rgba(56, 189, 248, 0.15);
+    --water-btn-hover: rgba(56, 189, 248, 0.3);
+    --checkbox-bg: rgba(148, 163, 184, 0.06);
+    --badge-bg: rgba(56, 189, 248, 0.16);
 }
 
 * {
@@ -29,6 +57,9 @@ body {
             transparent 25%
         ),
         linear-gradient(180deg, var(--bg-start), var(--bg-end));
+    transition:
+        background 0.4s ease,
+        color 0.4s ease;
 }
 
 button,
@@ -42,11 +73,15 @@ textarea {
     width: min(1080px, calc(100% - 2rem));
     margin: 2.4rem auto 3rem;
     padding: 2rem;
-    background: rgba(15, 23, 42, 0.8);
+    background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
     backdrop-filter: blur(18px);
+    transition:
+        background 0.4s ease,
+        border-color 0.4s ease,
+        box-shadow 0.4s ease;
 }
 
 .theme-toggle-container {
@@ -56,21 +91,21 @@ textarea {
 }
 
 .theme-btn {
-    border: 1px solid rgba(148, 163, 184, 0.35);
+    border: 1px solid var(--card-border);
     border-radius: 999px;
     padding: 0.8rem 1.2rem;
-    background: rgba(15, 23, 42, 0.96);
+    background: var(--theme-btn-bg);
     color: var(--text-secondary);
     cursor: pointer;
     transition:
         transform 0.2s ease,
-        background 0.2s ease,
-        color 0.2s ease;
+        background 0.3s ease,
+        color 0.3s ease;
 }
 
 .theme-btn:hover {
     transform: translateY(-1px);
-    background: rgba(56, 189, 248, 0.12);
+    background: var(--water-btn-bg);
     color: var(--text-primary);
 }
 
@@ -86,6 +121,9 @@ h1 {
     border-radius: 22px;
     padding: 1.6rem;
     margin-bottom: 1.4rem;
+    transition:
+        background 0.4s ease,
+        border-color 0.4s ease;
 }
 
 .card h2 {
@@ -100,15 +138,16 @@ select,
 textarea,
 input[type='number'] {
     width: 100%;
-    border: 1px solid rgba(148, 163, 184, 0.2);
+    border: 1px solid var(--card-border);
     border-radius: 16px;
     padding: 0.95rem 1rem;
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--input-bg);
     color: var(--text-primary);
     outline: none;
     transition:
         border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        box-shadow 0.2s ease,
+        background 0.4s ease;
 }
 
 input[type='date']:focus,
@@ -116,7 +155,7 @@ select:focus,
 textarea:focus,
 input[type='number']:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+    box-shadow: 0 0 0 4px var(--water-btn-bg);
 }
 
 textarea {
@@ -136,7 +175,7 @@ textarea {
     height: 3rem;
     border: none;
     border-radius: 50%;
-    background: rgba(56, 189, 248, 0.15);
+    background: var(--water-btn-bg);
     color: var(--text-primary);
     cursor: pointer;
     font-size: 1.4rem;
@@ -144,7 +183,7 @@ textarea {
 }
 
 .water-tracker button:hover {
-    background: rgba(56, 189, 248, 0.3);
+    background: var(--water-btn-hover);
 }
 
 #waterCount {
@@ -156,7 +195,7 @@ textarea {
 .progress-container {
     height: 0.8rem;
     width: 100%;
-    background: rgba(148, 163, 184, 0.12);
+    background: var(--checkbox-bg);
     border-radius: 999px;
     overflow: hidden;
 }
@@ -164,7 +203,7 @@ textarea {
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, #38bdf8, #0ea5e9);
+    background: linear-gradient(90deg, var(--accent), #0ea5e9);
     border-radius: 999px;
     transition: width 0.3s ease;
 }
@@ -187,15 +226,16 @@ textarea {
     gap: 0.75rem;
     padding: 0.9rem 1rem;
     border-radius: 16px;
-    background: rgba(148, 163, 184, 0.06);
+    background: var(--checkbox-bg);
     cursor: pointer;
     color: var(--text-primary);
+    transition: background 0.3s ease;
 }
 
 .checkbox-group input {
     width: 1.1rem;
     height: 1.1rem;
-    accent-color: #38bdf8;
+    accent-color: var(--accent);
 }
 
 .weight-group {
@@ -209,7 +249,7 @@ textarea {
     justify-content: center;
     padding: 0.55rem 0.85rem;
     border-radius: 999px;
-    background: rgba(56, 189, 248, 0.16);
+    background: var(--badge-bg);
     color: var(--accent-strong);
     font-size: 0.95rem;
 }
@@ -234,28 +274,28 @@ textarea {
 }
 
 .primary-btn {
-    background: linear-gradient(135deg, #38bdf8, #0ea5e9);
-    color: #0f172a;
+    background: linear-gradient(135deg, var(--accent), #0ea5e9);
+    color: #fff;
 }
 
 .danger-btn {
-    background: rgba(248, 113, 113, 0.18);
-    color: #f8fafc;
+    background: var(--danger);
+    color: #fff;
 }
 
 .primary-btn:hover,
 .danger-btn:hover {
     transform: translateY(-1px);
-    filter: brightness(1.04);
+    filter: brightness(1.1);
 }
 
 #statusMsg {
     margin: 0;
     padding: 0.9rem 1rem;
     border-radius: 16px;
-    background: rgba(52, 211, 153, 0.16);
+    background: rgba(16, 185, 129, 0.15);
     color: var(--success);
-    border: 1px solid rgba(52, 211, 153, 0.25);
+    border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .hidden {
@@ -274,16 +314,30 @@ textarea {
     font-style: italic;
 }
 
+.history-item {
+    padding: 12px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 0.95rem;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-date {
+    font-weight: bold;
+    color: var(--accent);
+    margin-bottom: 5px;
+}
+
 @media (max-width: 720px) {
     .container {
         padding: 1.4rem;
     }
-
     .water-tracker {
         flex-wrap: wrap;
         justify-content: center;
     }
-
     .action-buttons {
         flex-direction: column;
     }
