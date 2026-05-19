@@ -21,7 +21,7 @@ const historyLog = document.getElementById('historyLog');
 const motivationCard = document.getElementById('motivationCard');
 const quoteText = document.getElementById('quoteText');
 
-// Селектори нової таблиці зважувань
+// Селектори таблиці зважувань
 const weightGoalInput = document.getElementById('weightGoalInput');
 const weeklyDateInput = document.getElementById('weeklyDateInput');
 const weeklyWeightInput = document.getElementById('weeklyWeightInput');
@@ -32,6 +32,7 @@ const weeklyWeightTableBody = document.querySelector(
 
 let currentWater = 0;
 const WATER_TARGET = 12;
+let statusTimeout; // Змінна для фіксу багу таймера збереження
 
 const motivationData = [
     {
@@ -102,10 +103,8 @@ function renderWeeklyWeights() {
         return;
     }
 
-    // Сортуємо від старого до нового, щоб правильно знайти різницю з ПОПЕРЕДНІМ
     weights.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Прораховуємо різницю
     const renderData = weights.map((item, index) => {
         let diffPrev = null;
         if (index > 0) {
@@ -118,7 +117,6 @@ function renderWeeklyWeights() {
         return { ...item, diffPrev, diffGoal, originalIndex: index };
     });
 
-    // Тепер сортуємо для виведення на екран (свіжі зверху)
     renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     renderData.forEach((item) => {
@@ -130,10 +128,11 @@ function renderWeeklyWeights() {
 
         let diffHtml = '';
         if (item.diffPrev !== null) {
-            if (item.diffPrev > 0) {
-                diffHtml = `<span class="diff-up"> (+${item.diffPrev} 🔴)</span>`; // Набір ваги
-            } else if (item.diffPrev < 0) {
-                diffHtml = `<span class="diff-down"> (${item.diffPrev} 🟢)</span>`; // Втрата ваги
+            const diffNum = parseFloat(item.diffPrev); // Конвертуємо в число для точного порівняння
+            if (diffNum > 0) {
+                diffHtml = `<span class="diff-up"> (+${item.diffPrev} 🔴)</span>`;
+            } else if (diffNum < 0) {
+                diffHtml = `<span class="diff-down"> (${item.diffPrev} 🟢)</span>`;
             } else {
                 diffHtml = `<span class="diff-goal"> (без змін)</span>`;
             }
@@ -154,9 +153,10 @@ function renderWeeklyWeights() {
         weeklyWeightTableBody.appendChild(tr);
     });
 
+    // Фікс багу видалення (використовуємо currentTarget)
     document.querySelectorAll('.delete-w-btn').forEach((btn) => {
         btn.addEventListener('click', (e) => {
-            const idx = e.target.getAttribute('data-index');
+            const idx = parseInt(e.currentTarget.getAttribute('data-index'));
             const currentWeights = getWeeklyWeights();
             currentWeights.sort((a, b) => new Date(a.date) - new Date(b.date));
             currentWeights.splice(idx, 1);
@@ -173,8 +173,19 @@ addWeeklyWeightBtn.addEventListener('click', () => {
         alert('Будь ласка, оберіть дату та введіть коректну вагу');
         return;
     }
+
     const currentWeights = getWeeklyWeights();
-    currentWeights.push({ date: selectedDate, weight: weight });
+
+    // Фікс багу дублювання дат: якщо дата вже є, ми оновлюємо вагу, а не створюємо дублікат
+    const existingIndex = currentWeights.findIndex(
+        (item) => item.date === selectedDate,
+    );
+    if (existingIndex !== -1) {
+        currentWeights[existingIndex].weight = weight;
+    } else {
+        currentWeights.push({ date: selectedDate, weight: weight });
+    }
+
     saveWeeklyWeights(currentWeights);
     weeklyWeightInput.value = '';
     renderWeeklyWeights();
@@ -244,8 +255,11 @@ saveBtn.addEventListener('click', () => {
 
     saveMasterData(masterData);
     loadDayData();
+
+    // Фікс багу повідомлення при швидкому подвійному кліку
+    clearTimeout(statusTimeout);
     statusMsg.classList.remove('hidden');
-    setTimeout(() => statusMsg.classList.add('hidden'), 2500);
+    statusTimeout = setTimeout(() => statusMsg.classList.add('hidden'), 2500);
 });
 
 resetBtn.addEventListener('click', () => {
@@ -288,16 +302,20 @@ function renderHistoryList() {
         let suppsText =
             supplements.length > 0 ? supplements.join(', ') : 'не відмічено';
 
+        // Фікс багу злиття тексту: зберігаємо абзаци в нотатках
+        const formattedNotes = day.notes
+            ? day.notes.replace(/\n/g, '<br>')
+            : '';
+
         item.innerHTML = `
             <div class="history-date">${formattedDate}</div>
             <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'}</div>
             <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${suppsText}</div>
-            ${day.notes ? `<div style="margin-top: 8px;">📝 <em>${day.notes}</em></div>` : ''}
+            ${formattedNotes ? `<div style="margin-top: 8px;">📝 <em>${formattedNotes}</em></div>` : ''}
         `;
         historyLog.appendChild(item);
     });
 }
 
-// Запуск при першому старті сторінки
 loadDayData();
 renderWeeklyWeights();

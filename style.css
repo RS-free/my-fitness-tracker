@@ -197,9 +197,10 @@ input[type='number']:focus {
 }
 
 textarea {
-    height: 100%;
+    width: 100%;
     min-height: 120px;
-    resize: none;
+    resize: vertical;
+    /* Дозволить тягнути поле вниз за куточок, якщо тексту багато */
 }
 
 /* ВОДА */
@@ -293,6 +294,8 @@ textarea {
 .goal-group {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    /* Додано для адаптивності на телефонах */
     gap: 1rem;
     margin-bottom: 1.5rem;
     background: rgba(112, 114, 118, 0.15);
@@ -308,11 +311,36 @@ textarea {
     white-space: nowrap;
 }
 
+.goal-group input {
+    flex: 1;
+    min-width: 100px;
+}
+
+/* Не дасть полю цілі зплющитися */
+
 .weekly-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
+    display: flex;
+    /* Замінили жорстку сітку на гнучкий flex */
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
+}
+
+.weekly-form input[type="date"] {
+    flex: 2;
+    /* Дата бере трохи більше місця */
+    min-width: 120px;
+}
+
+.weekly-form input[type="number"] {
+    flex: 1;
+    /* Вага бере залишок */
+    min-width: 80px;
+    /* Мінімальна ширина, щоб поле більше ніколи не зникало */
+}
+
+.weekly-form button {
+    flex: 0 0 auto;
 }
 
 .mini-btn {
@@ -463,14 +491,12 @@ th {
         padding: 1.2rem;
     }
 
-    .weekly-form {
-        grid-template-columns: 1fr 1fr;
-    }
-
     .weekly-form button {
-        grid-column: span 2;
+        width: 100%;
+        margin-top: 0.5rem;
     }
 
+    /* Кнопка під полями на телефонах */
     .motivation-card {
         height: 180px;
         padding: 1.2rem !important;
