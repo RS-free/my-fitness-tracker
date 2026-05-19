@@ -130,9 +130,9 @@ function renderWeeklyWeights() {
         if (item.diffPrev !== null) {
             const diffNum = parseFloat(item.diffPrev); // Конвертуємо в число для точного порівняння
             if (diffNum > 0) {
-                diffHtml = `<span class="diff-up"> (+${item.diffPrev} 🔴)</span>`;
+                diffHtml = `<span class="diff-up"> (+${item.diffPrev})</span>`;
             } else if (diffNum < 0) {
-                diffHtml = `<span class="diff-down"> (${item.diffPrev} 🟢)</span>`;
+                diffHtml = `<span class="diff-down"> (${item.diffPrev})</span>`;
             } else {
                 diffHtml = `<span class="diff-goal"> (без змін)</span>`;
             }
