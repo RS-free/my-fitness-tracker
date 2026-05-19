@@ -27,7 +27,6 @@ const quoteText = document.getElementById('quoteText');
 
 // Селектори нової таблиці
 const weeklyWeightInput = document.getElementById('weeklyWeightInput');
-const weeklyDateInput = document.getElementById('weeklyDateInput'); // ДОДАЛИ ЦЕЙ РЯДОК
 const addWeeklyWeightBtn = document.getElementById('addWeeklyWeightBtn');
 const weeklyWeightTableBody = document.querySelector(
     '#weeklyWeightTable tbody',
@@ -70,7 +69,6 @@ function setRandomMotivation() {
 
 const today = new Date().toISOString().split('T')[0];
 dateSelect.value = today;
-weeklyDateInput.value = today; // ДОДАЛИ ЦЕЙ РЯДОК
 
 if (localStorage.getItem('fit_theme') === 'dark') {
     document.body.classList.add('dark-mode');
@@ -165,16 +163,14 @@ function renderWeeklyWeights() {
 
 addWeeklyWeightBtn.addEventListener('click', () => {
     const weight = parseFloat(weeklyWeightInput.value);
-    const selectedDate = weeklyDateInput.value; // Беремо дату з нового поля
-
-    if (!weight || weight <= 0 || !selectedDate) {
-        alert('Будь ласка, оберіть дату та введіть коректну вагу');
+    if (!weight || weight <= 0) {
+        alert('Будь ласка, введіть коректну вагу');
         return;
     }
 
     const currentWeights = getWeeklyWeights();
     currentWeights.push({
-        date: selectedDate, // Зберігаємо обрану дату, а не лише сьогоднішню
+        date: new Date().toISOString().split('T')[0], // Зберігаємо поточну дату
         weight: weight,
     });
 
