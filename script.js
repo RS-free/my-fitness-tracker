@@ -6,37 +6,33 @@ const waterProgressBar = document.getElementById('waterProgress');
 const btnMinus = document.getElementById('btnMinus');
 const btnPlus = document.getElementById('btnPlus');
 
-// Чекбокси добавок
 const vitD3 = document.getElementById('vitD3');
 const omega3 = document.getElementById('omega3');
 const magnesium = document.getElementById('magnesium');
 const ashwa = document.getElementById('ashwa');
 const lcarnitine = document.getElementById('lcarnitine');
 const vitB = document.getElementById('vitB');
-
-const weightInput = document.getElementById('weightInput');
-const weightLeft = document.getElementById('weightLeft');
 const dayNotes = document.getElementById('dayNotes');
+
 const saveBtn = document.getElementById('saveBtn');
 const resetBtn = document.getElementById('resetBtn');
 const statusMsg = document.getElementById('statusMsg');
 const historyLog = document.getElementById('historyLog');
-const themeToggle = document.getElementById('themeToggle');
 const motivationCard = document.getElementById('motivationCard');
 const quoteText = document.getElementById('quoteText');
 
-// Селектори нової таблиці
+// Селектори нової таблиці зважувань
+const weightGoalInput = document.getElementById('weightGoalInput');
+const weeklyDateInput = document.getElementById('weeklyDateInput');
 const weeklyWeightInput = document.getElementById('weeklyWeightInput');
 const addWeeklyWeightBtn = document.getElementById('addWeeklyWeightBtn');
 const weeklyWeightTableBody = document.querySelector(
     '#weeklyWeightTable tbody',
 );
 
-// Робочі змінні
 let currentWater = 0;
 const WATER_TARGET = 12;
 
-// Масив спортивних мотиваційних картинок та цитат
 const motivationData = [
     {
         quote: 'Тіло досягає того, у що вірить розум.',
@@ -54,10 +50,6 @@ const motivationData = [
         quote: 'Не зупиняйся, коли втомився. Зупиняйся, коли закінчив.',
         bg: 'https://images.unsplash.com/photo-1571731956622-f1c840b71b1e?q=80&w=1000&auto=format&fit=crop',
     },
-    {
-        quote: "Кожне тяжке тренування — це крок до залізного здоров'я.",
-        bg: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?q=80&w=1000&auto=format&fit=crop',
-    },
 ];
 
 function setRandomMotivation() {
@@ -69,27 +61,11 @@ function setRandomMotivation() {
 
 const today = new Date().toISOString().split('T')[0];
 dateSelect.value = today;
-
-if (localStorage.getItem('fit_theme') === 'dark') {
-    document.body.classList.add('dark-mode');
-    themeToggle.textContent = '☀️ Світла тема';
-}
-
-themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    if (document.body.classList.contains('dark-mode')) {
-        localStorage.setItem('fit_theme', 'dark');
-        themeToggle.textContent = '☀️ Світла тема';
-    } else {
-        localStorage.setItem('fit_theme', 'light');
-        themeToggle.textContent = '🌙 Темна тема';
-    }
-});
+weeklyDateInput.value = today;
 
 function getMasterData() {
     return JSON.parse(localStorage.getItem('fit_master_history')) || {};
 }
-
 function saveMasterData(data) {
     localStorage.setItem('fit_master_history', JSON.stringify(data));
 }
@@ -100,24 +76,18 @@ function updateWaterUI() {
     waterProgressBar.style.width = `${percentage}%`;
 }
 
-function updateWeightTargetUI() {
-    const currentWeight = parseFloat(weightInput.value);
-    if (currentWeight && currentWeight > 85) {
-        const left = (currentWeight - 85).toFixed(1);
-        weightLeft.textContent = `🎯 Залишилося скинути: ${left} кг`;
-    } else if (currentWeight && currentWeight <= 85) {
-        weightLeft.textContent = `🎉 Ціль досягнута! Ти в ідеальній формі!`;
-    } else {
-        weightLeft.textContent = '';
-    }
-}
-weightInput.addEventListener('input', updateWeightTargetUI);
+// ==========================================
+// ЛОГІКА КОНТРОЛЬНИХ ЗВАЖУВАНЬ ТА ЦІЛІ
+// ==========================================
+weightGoalInput.value = localStorage.getItem('fit_weight_goal') || '';
+weightGoalInput.addEventListener('input', (e) => {
+    localStorage.setItem('fit_weight_goal', e.target.value);
+    renderWeeklyWeights();
+});
 
-// ЛОГІКА ЩОТИЖНЕВИХ ЗВАЖУВАНЬ (ТАБЛИЦЯ)
 function getWeeklyWeights() {
     return JSON.parse(localStorage.getItem('fit_weekly_weights')) || [];
 }
-
 function saveWeeklyWeights(data) {
     localStorage.setItem('fit_weekly_weights', JSON.stringify(data));
 }
@@ -125,35 +95,70 @@ function saveWeeklyWeights(data) {
 function renderWeeklyWeights() {
     const weights = getWeeklyWeights();
     weeklyWeightTableBody.innerHTML = '';
-
-    // Сортуємо: свіжі зважування зверху
-    weights.sort((a, b) => new Date(b.date) - new Date(a.date));
+    const goal = parseFloat(weightGoalInput.value);
 
     if (weights.length === 0) {
-        weeklyWeightTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary); font-style:italic; padding:1.5rem 0;">Немає записів</td></tr>`;
+        weeklyWeightTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary); font-style:italic; padding:1.5rem 0;">Записів ще немає</td></tr>`;
         return;
     }
 
-    weights.forEach((item, index) => {
+    // Сортуємо від старого до нового, щоб правильно знайти різницю з ПОПЕРЕДНІМ
+    weights.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    // Прораховуємо різницю
+    const renderData = weights.map((item, index) => {
+        let diffPrev = null;
+        if (index > 0) {
+            diffPrev = (item.weight - weights[index - 1].weight).toFixed(1);
+        }
+        let diffGoal = null;
+        if (!isNaN(goal) && goal > 0) {
+            diffGoal = Math.abs(item.weight - goal).toFixed(1);
+        }
+        return { ...item, diffPrev, diffGoal, originalIndex: index };
+    });
+
+    // Тепер сортуємо для виведення на екран (свіжі зверху)
+    renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    renderData.forEach((item) => {
         const formattedDate = new Date(item.date).toLocaleDateString('uk-UA', {
-            day: 'numeric',
-            month: 'numeric',
+            day: '2-digit',
+            month: '2-digit',
         });
         const tr = document.createElement('tr');
+
+        let diffHtml = '';
+        if (item.diffPrev !== null) {
+            if (item.diffPrev > 0) {
+                diffHtml = `<span class="diff-up"> (+${item.diffPrev} 🔴)</span>`; // Набір ваги
+            } else if (item.diffPrev < 0) {
+                diffHtml = `<span class="diff-down"> (${item.diffPrev} 🟢)</span>`; // Втрата ваги
+            } else {
+                diffHtml = `<span class="diff-goal"> (без змін)</span>`;
+            }
+        }
+
+        let goalHtml =
+            item.diffGoal !== null
+                ? `<br><span class="diff-goal">(до цілі: ${item.diffGoal} кг)</span>`
+                : '';
+
         tr.innerHTML = `
             <td><strong>${formattedDate}</strong></td>
-            <td>${item.weight} кг</td>
-            <td><button class="delete-w-btn" data-index="${index}">❌</button></td>
+            <td>
+                <span class="weight-record">${item.weight} кг</span> ${diffHtml} ${goalHtml}
+            </td>
+            <td><button class="delete-w-btn" data-index="${item.originalIndex}">❌</button></td>
         `;
         weeklyWeightTableBody.appendChild(tr);
     });
 
-    // Навішуємо видалення на хрестики
     document.querySelectorAll('.delete-w-btn').forEach((btn) => {
         btn.addEventListener('click', (e) => {
             const idx = e.target.getAttribute('data-index');
             const currentWeights = getWeeklyWeights();
-            currentWeights.sort((a, b) => new Date(b.date) - new Date(a.date));
+            currentWeights.sort((a, b) => new Date(a.date) - new Date(b.date));
             currentWeights.splice(idx, 1);
             saveWeeklyWeights(currentWeights);
             renderWeeklyWeights();
@@ -163,22 +168,21 @@ function renderWeeklyWeights() {
 
 addWeeklyWeightBtn.addEventListener('click', () => {
     const weight = parseFloat(weeklyWeightInput.value);
-    if (!weight || weight <= 0) {
-        alert('Будь ласка, введіть коректну вагу');
+    const selectedDate = weeklyDateInput.value;
+    if (!weight || weight <= 0 || !selectedDate) {
+        alert('Будь ласка, оберіть дату та введіть коректну вагу');
         return;
     }
-
     const currentWeights = getWeeklyWeights();
-    currentWeights.push({
-        date: new Date().toISOString().split('T')[0], // Зберігаємо поточну дату
-        weight: weight,
-    });
-
+    currentWeights.push({ date: selectedDate, weight: weight });
     saveWeeklyWeights(currentWeights);
     weeklyWeightInput.value = '';
     renderWeeklyWeights();
 });
 
+// ==========================================
+// ЛОГІКА ДЕННИХ ЗАПИСІВ
+// ==========================================
 function loadDayData() {
     const selectedDate = dateSelect.value;
     const masterData = getMasterData();
@@ -193,7 +197,6 @@ function loadDayData() {
         ashwa.checked = dayData.ashwa || false;
         lcarnitine.checked = dayData.lcarnitine || false;
         vitB.checked = dayData.vitB || false;
-        weightInput.value = dayData.weight || '';
         dayNotes.value = dayData.notes || '';
     } else {
         programDaySelect.value = 'Відпочинок';
@@ -205,24 +208,13 @@ function loadDayData() {
         lcarnitine.checked = false;
         vitB.checked = false;
         dayNotes.value = '';
-
-        const dates = Object.keys(masterData).sort();
-        if (dates.length > 0) {
-            weightInput.value =
-                masterData[dates[dates.length - 1]].weight || '';
-        } else {
-            weightInput.value = '';
-        }
     }
     updateWaterUI();
-    updateWeightTargetUI();
     renderHistoryList();
     setRandomMotivation();
 }
 
-dateSelect.value = today;
 dateSelect.addEventListener('change', loadDayData);
-
 btnPlus.addEventListener('click', () => {
     currentWater++;
     updateWaterUI();
@@ -247,15 +239,13 @@ saveBtn.addEventListener('click', () => {
         ashwa: ashwa.checked,
         lcarnitine: lcarnitine.checked,
         vitB: vitB.checked,
-        weight: weightInput.value,
         notes: dayNotes.value,
     };
 
     saveMasterData(masterData);
     loadDayData();
-
     statusMsg.classList.remove('hidden');
-    setTimeout(() => statusMsg.classList.add('hidden'), 2000);
+    setTimeout(() => statusMsg.classList.add('hidden'), 2500);
 });
 
 resetBtn.addEventListener('click', () => {
@@ -285,7 +275,6 @@ function renderHistoryList() {
             day: 'numeric',
             month: 'long',
         });
-
         const item = document.createElement('div');
         item.className = 'history-item';
 
@@ -301,9 +290,9 @@ function renderHistoryList() {
 
         item.innerHTML = `
             <div class="history-date">${formattedDate}</div>
-            <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'} | <strong>Вага:</strong> ${day.weight ? day.weight + ' кг' : 'не вказано'}</div>
+            <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'}</div>
             <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${suppsText}</div>
-            ${day.notes ? `<div style="margin-top: 5px;">📝 <em>${day.notes}</em></div>` : ''}
+            ${day.notes ? `<div style="margin-top: 8px;">📝 <em>${day.notes}</em></div>` : ''}
         `;
         historyLog.appendChild(item);
     });

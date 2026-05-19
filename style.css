@@ -1,44 +1,39 @@
-:root {
-    /* СВІТЛА ТЕМА */
-    --bg-start: #f1f5f9;
-    --bg-end: #cbd5e1;
-    --card: rgba(255, 255, 255, 0.75);
-    --card-border: rgba(255, 255, 255, 0.6);
-    --text-primary: #0f172a;
-    --text-secondary: #475569;
-    --accent: #0284c7;
-    --accent-strong: #0369a1;
-    --danger: #ef4444;
-    --success: #10b981;
-    --shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
-    --radius: 24px;
-    --input-bg: rgba(255, 255, 255, 0.9);
-    --theme-btn-bg: rgba(255, 255, 255, 0.9);
-    --water-btn-bg: rgba(14, 165, 233, 0.12);
-    --water-btn-hover: rgba(14, 165, 233, 0.25);
-    --checkbox-bg: rgba(148, 163, 184, 0.12);
-    --badge-bg: rgba(14, 165, 233, 0.15);
-}
+/* Підключення резервних шрифтів, шрифт Volja застосовуватиметься, якщо встановлений на пристрої */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap');
 
-.dark-mode {
-    /* ТЕМНА ТЕМА */
-    --bg-start: #0f172a;
-    --bg-end: #1e293b;
-    --card: rgba(15, 23, 42, 0.65);
-    --card-border: rgba(148, 163, 184, 0.12);
+:root {
+    /* МІЛІТАРІ ТЕМА (заснована на кольорах ЗСУ) */
+    --bg-start: #444A38;
+    /* Олива */
+    --bg-end: #23261c;
+    /* Темна Олива */
+    --card: rgba(77, 70, 52, 0.85);
+    /* Мундир */
+    --card-border: #6A653A;
+    /* Степ */
     --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --accent: #38bdf8;
-    --accent-strong: #7dd3fc;
-    --danger: #f87171;
-    --success: #34d399;
-    --shadow: 0 30px 80px rgba(15, 23, 42, 0.5);
-    --input-bg: rgba(15, 23, 42, 0.8);
-    --theme-btn-bg: rgba(15, 23, 42, 0.9);
-    --water-btn-bg: rgba(56, 189, 248, 0.12);
-    --water-btn-hover: rgba(56, 189, 248, 0.25);
-    --checkbox-bg: rgba(148, 163, 184, 0.05);
-    --badge-bg: rgba(56, 189, 248, 0.15);
+    --text-secondary: #c2c4c7;
+    /* Світла Сталь */
+    --accent: #F39200;
+    /* Золото */
+    --accent-strong: #ffaa33;
+    /* Яскраве золото для підсвіток */
+    --danger: #ef4444;
+    /* Класичний червоний для видалення */
+    --success: #10b981;
+    /* Класичний зелений для прогресу */
+    --shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    --radius: 12px;
+    /* Більш суворі кути для мілітарі стилю */
+    --input-bg: rgba(112, 114, 118, 0.2);
+    /* Сталь напівпрозора */
+    --theme-btn-bg: rgba(77, 70, 52, 0.9);
+    --water-btn-bg: rgba(243, 146, 0, 0.2);
+    --water-btn-hover: rgba(243, 146, 0, 0.4);
+    --checkbox-bg: rgba(112, 114, 118, 0.25);
+
+    /* Шрифт Volja (якщо є в системі), інакше Oswald */
+    --font-military: 'Volja', 'Oswald', system-ui, sans-serif;
 }
 
 * {
@@ -50,15 +45,19 @@ body {
     min-height: 100vh;
     font-family: 'Inter', system-ui, sans-serif;
     color: var(--text-primary);
-    background:
-        radial-gradient(circle at top,
-            rgba(56, 189, 248, 0.1),
-            transparent 35%),
-        linear-gradient(180deg, var(--bg-start), var(--bg-end));
+    background: linear-gradient(180deg, var(--bg-start), var(--bg-end));
     background-attachment: fixed;
-    transition:
-        background 0.4s ease,
-        color 0.4s ease;
+}
+
+/* Застосування шрифту Volja до заголовків та кнопок */
+h1,
+h2,
+.primary-btn,
+.danger-btn,
+.target-badge,
+th {
+    font-family: var(--font-military);
+    letter-spacing: 0.05em;
 }
 
 button,
@@ -73,53 +72,32 @@ textarea {
     margin: 2rem auto 3rem;
     padding: 2rem;
     background: var(--card);
-    border: 1px solid var(--card-border);
+    border: 2px solid var(--card-border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px);
 }
 
 .theme-toggle-container {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1.2rem;
+    display: none;
+    /* У мілітарі стилі залишаємо одну сувору тему, кнопку ховаємо */
 }
 
-.theme-btn {
-    border: 1px solid var(--card-border);
-    border-radius: 999px;
-    padding: 0.7rem 1.2rem;
-    background: var(--theme-btn-bg);
-    color: var(--text-secondary);
-    cursor: pointer;
-    font-weight: 500;
-    transition:
-        transform 0.2s ease,
-        background 0.3s ease,
-        color 0.3s ease;
-}
-
-.theme-btn:hover {
-    transform: translateY(-1px);
-    background: var(--water-btn-bg);
-    color: var(--text-primary);
-}
-
-/* СТИЛІ БАНЕРА МОТИВАЦІЇ */
+/* БАНЕР МОТИВАЦІЇ */
 .motivation-card {
     position: relative;
-    height: 200px;
-    border-radius: 20px;
+    height: 220px;
+    border-radius: var(--radius);
     overflow: hidden;
     background-size: cover;
     background-position: center;
+    background-repeat: no-repeat;
     display: flex;
     align-items: center;
     padding: 2.5rem !important;
     margin-bottom: 2rem;
-    border: none;
-    transition: background-image 0.5s ease;
+    border: 2px solid var(--accent);
+    /* Золота рамка для банера */
 }
 
 .motivation-overlay {
@@ -128,9 +106,7 @@ textarea {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg,
-            rgba(15, 23, 42, 0.85) 0%,
-            rgba(15, 23, 42, 0.4) 100%);
+    background: linear-gradient(90deg, rgba(35, 38, 28, 0.9) 0%, rgba(68, 74, 56, 0.4) 100%);
     z-index: 1;
 }
 
@@ -143,10 +119,9 @@ textarea {
 
 .motivation-content h1 {
     margin: 0 0 0.5rem;
-    font-size: clamp(1.8rem, 2.5vw, 2.4rem);
-    letter-spacing: -0.03em;
-    font-weight: 800;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: clamp(2rem, 3vw, 2.8rem);
+    text-transform: uppercase;
+    text-shadow: 2px 2px 0px #111224;
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
@@ -154,20 +129,18 @@ textarea {
 
 .motivation-content h1 .subtitle {
     font-size: clamp(1.2rem, 1.8vw, 1.5rem);
-    font-weight: 500;
-    color: #cbd5e1;
+    color: var(--accent);
 }
 
 #quoteText {
     margin: 0;
-    font-size: clamp(1rem, 1.5vw, 1.2rem);
+    font-size: clamp(1.1rem, 1.5vw, 1.3rem);
     font-style: italic;
-    color: #cbd5e1;
-    line-height: 1.4;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    color: #e2e8f0;
+    text-shadow: 1px 1px 2px #000;
 }
 
-/* НАЛАШТУВАННЯ СІТКИ GRID (3 КОЛОНКИ) */
+/* СІТКА GRID */
 .main-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -181,11 +154,10 @@ textarea {
 }
 
 .card {
-    background: var(--card);
+    background: rgba(35, 38, 28, 0.6);
     border: 1px solid var(--card-border);
-    border-radius: 20px;
-    padding: 1.6rem;
-    margin-bottom: 0;
+    border-radius: var(--radius);
+    padding: 1.5rem;
     flex-grow: 1;
 }
 
@@ -196,10 +168,11 @@ textarea {
 .card h2 {
     margin-top: 0;
     margin-bottom: 1.2rem;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--accent-strong);
+    color: var(--accent);
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 0.5rem;
 }
 
 input[type='date'],
@@ -208,14 +181,12 @@ textarea,
 input[type='number'] {
     width: 100%;
     border: 1px solid var(--card-border);
-    border-radius: 14px;
+    border-radius: 8px;
     padding: 0.9rem 1rem;
     background: var(--input-bg);
     color: var(--text-primary);
     outline: none;
-    transition:
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+    transition: border-color 0.2s ease;
 }
 
 input[type='date']:focus,
@@ -223,7 +194,6 @@ select:focus,
 textarea:focus,
 input[type='number']:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 4px var(--water-btn-bg);
 }
 
 textarea {
@@ -244,56 +214,50 @@ textarea {
 .water-tracker button {
     width: 3.2rem;
     height: 3.2rem;
-    border: none;
-    border-radius: 50%;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
     background: var(--water-btn-bg);
-    color: var(--text-primary);
+    color: var(--accent);
     cursor: pointer;
     font-size: 1.5rem;
     font-weight: bold;
-    transition:
-        background 0.2s ease,
-        transform 0.1s ease;
+    transition: background 0.2s ease;
 }
 
 .water-tracker button:hover {
     background: var(--water-btn-hover);
 }
 
-.water-tracker button:active {
-    transform: scale(0.95);
-}
-
 #waterCount {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     font-weight: 800;
+    font-family: var(--font-military);
+    color: var(--accent);
     min-width: 3rem;
     text-align: center;
 }
 
 .progress-container {
-    height: 0.8rem;
+    height: 1rem;
     width: 100%;
     background: var(--checkbox-bg);
-    border-radius: 999px;
+    border-radius: 4px;
     overflow: hidden;
     margin-bottom: 0.8rem;
+    border: 1px solid var(--card-border);
 }
 
 .progress-bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, var(--accent), #0ea5e9);
-    border-radius: 999px;
+    background: var(--accent);
     transition: width 0.3s ease;
 }
 
-.target-info,
-.weight-left-info {
-    margin: 0;
+.target-info {
     text-align: center;
     color: var(--text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
 }
 
 /* ДОБАВКИ СІТКОЮ */
@@ -308,84 +272,98 @@ textarea {
     align-items: center;
     gap: 0.75rem;
     padding: 0.85rem 1rem;
-    border-radius: 14px;
+    border-radius: 8px;
     background: var(--checkbox-bg);
     cursor: pointer;
     color: var(--text-primary);
-    font-size: 0.95rem;
-    transition: background 0.2s ease;
+    border: 1px solid transparent;
 }
 
 .checkbox-group label:hover {
-    background: var(--water-btn-bg);
+    border-color: var(--accent);
 }
 
 .checkbox-group input {
-    width: 1.1rem;
-    height: 1.1rem;
+    width: 1.2rem;
+    height: 1.2rem;
     accent-color: var(--accent);
 }
 
-/* ВАГА */
-.weight-group {
+/* КОНТРОЛЬНІ ЗВАЖУВАННЯ (ПРАВА КОЛОНКА) */
+.goal-group {
     display: flex;
-    gap: 1rem;
     align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    background: rgba(112, 114, 118, 0.15);
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
 }
 
-.target-badge {
-    padding: 0.85rem 1.2rem;
-    border-radius: 14px;
-    background: var(--badge-bg);
-    color: var(--accent-strong);
-    font-weight: bold;
+.goal-group label {
+    font-family: var(--font-military);
+    font-size: 1.1rem;
+    color: var(--accent);
     white-space: nowrap;
 }
 
-.weight-left-info {
-    margin-top: 1rem;
-    text-align: left;
-    font-weight: 700;
-    color: var(--success);
-}
-
-/* СТИЛІ ДЛЯ ТАБЛИЦІ ЩОТИЖНЕВОЇ ВАГИ */
 .weekly-form {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .mini-btn {
     padding: 0 1rem !important;
-    font-size: 0.95rem !important;
-    flex: none !important;
-    width: auto !important;
+    font-size: 1rem !important;
 }
 
 .table-container {
     width: 100%;
     max-height: 280px;
     overflow-y: auto;
-    margin-top: 0.5rem;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
-    text-align: left;
 }
 
 th,
 td {
-    padding: 0.75rem 0.5rem;
-    border-bottom: 1px solid var(--checkbox-bg);
+    padding: 0.8rem 0.5rem;
+    border-bottom: 1px solid var(--card-border);
 }
 
 th {
-    color: var(--accent-strong);
-    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.weight-record {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.diff-goal {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    margin-left: 5px;
+}
+
+.diff-up {
+    color: var(--danger);
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.diff-down {
+    color: var(--success);
+    font-weight: bold;
+    margin-left: 5px;
 }
 
 .delete-w-btn {
@@ -393,10 +371,10 @@ th {
     border: none;
     color: var(--danger);
     cursor: pointer;
-    font-size: 1rem;
-    padding: 0;
+    font-size: 1.2rem;
     display: block;
     margin: 0 auto;
+    transition: transform 0.2s;
 }
 
 .delete-w-btn:hover {
@@ -414,46 +392,40 @@ th {
 .danger-btn {
     flex: 1;
     border: none;
-    border-radius: 16px;
-    padding: 1.1rem;
+    border-radius: 8px;
+    padding: 1.2rem;
     cursor: pointer;
-    font-weight: 700;
-    font-size: 1.05rem;
-    transition:
-        transform 0.2s ease,
-        filter 0.2s ease;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    transition: filter 0.2s ease;
 }
 
 .primary-btn {
-    background: linear-gradient(135deg, var(--accent), #0ea5e9);
-    color: #ffffff;
-    box-shadow: 0 4px 15px rgba(14, 165, 233, 0.25);
+    background: var(--accent);
+    color: #111224;
 }
 
 .danger-btn {
-    background: rgba(248, 113, 113, 0.15);
+    background: rgba(239, 68, 68, 0.2);
     color: var(--danger);
-    border: 1px solid rgba(248, 113, 113, 0.2);
+    border: 1px solid var(--danger);
 }
 
 .primary-btn:hover,
 .danger-btn:hover {
-    transform: translateY(-2px);
-    filter: brightness(1.05);
+    filter: brightness(1.1);
 }
 
-.primary-btn:active,
-.danger-btn:active {
-    transform: translateY(0);
+.hidden {
+    display: none !important;
 }
 
 #statusMsg {
-    margin: 0 0 1.5rem;
     padding: 1rem;
-    border-radius: 14px;
-    background: rgba(16, 185, 129, 0.15);
+    border-radius: 8px;
+    background: rgba(16, 185, 129, 0.2);
     color: var(--success);
-    border: 1px solid rgba(16, 185, 129, 0.2);
+    border: 1px solid var(--success);
     text-align: center;
     font-weight: bold;
 }
@@ -463,88 +435,48 @@ th {
     margin-top: 1.5rem;
 }
 
-.history-card #historyLog {
-    display: grid;
-    gap: 1rem;
-}
-
 .history-item {
     padding: 1.2rem;
     background: var(--checkbox-bg);
-    border-radius: 14px;
-    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    border-left: 4px solid var(--accent);
+    margin-bottom: 1rem;
 }
 
 .history-date {
     font-weight: 800;
     color: var(--accent);
     margin-bottom: 0.4rem;
-    font-size: 1rem;
+    font-family: var(--font-military);
+    font-size: 1.2rem;
 }
 
-.empty-history {
-    text-align: center;
-    color: var(--text-secondary);
-    font-style: italic;
-    padding: 2rem 0;
-}
-
-/* АДАПТИВНІСТЬ ДЛЯ ПЛАНШЕТІВ ТА МОБІЛЬНИХ */
+/* АДАПТИВНІСТЬ */
 @media (max-width: 1024px) {
     .main-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
-    }
-
-    .checkbox-group {
-        grid-template-columns: 1fr 1fr;
     }
 }
 
 @media (max-width: 768px) {
     .container {
         padding: 1.2rem;
-        margin: 1rem auto;
     }
 
-    .checkbox-group {
-        grid-template-columns: 1fr;
-    }
-
-    .action-buttons {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .motivation-card {
-        height: 160px;
-        padding: 1.2rem !important;
-    }
-
-    .grid-column .card:not(:last-child) {
-        margin-bottom: 0;
-    }
-}
-
-/* Повертаємо зникнення тексту про збереження */
-.hidden {
-    display: none !important;
-}
-
-/* Робимо форму зважування красивою (в рядок) */
-.weekly-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-@media (max-width: 768px) {
     .weekly-form {
         grid-template-columns: 1fr 1fr;
     }
 
     .weekly-form button {
         grid-column: span 2;
+    }
+
+    .motivation-card {
+        height: 180px;
+        padding: 1.2rem !important;
+    }
+
+    .motivation-content h1 {
+        font-size: 1.8rem;
     }
 }
