@@ -34,30 +34,91 @@ let currentWater = 0;
 const WATER_TARGET = 12;
 let statusTimeout; // Змінна для фіксу багу таймера збереження
 
-const motivationData = [
-    {
-        quote: 'Тіло досягає того, у що вірить розум.',
-        bg: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1000&auto=format&fit=crop',
-    },
-    {
-        quote: 'Дисципліна — це міст між твоїми цілями та їх досягненням.',
-        bg: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop',
-    },
-    {
-        quote: 'Сьогоднішній біль — це твоя завтрашня сила.',
-        bg: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1000&auto=format&fit=crop',
-    },
-    {
-        quote: 'Не зупиняйся, коли втомився. Зупиняйся, коли закінчив.',
-        bg: 'https://images.unsplash.com/photo-1571731956622-f1c840b71b1e?q=80&w=1000&auto=format&fit=crop',
-    },
+// Селектори нової статистики на банері
+const bannerWeight = document.getElementById('bannerWeight');
+const bannerGoal = document.getElementById('bannerGoal');
+
+// ==========================================
+// ВЕЛИЧЕЗНА БАЗА МОТИВАЦІЇ ТА ФОТО (РОЗДІЛЬНО)
+// ==========================================
+const quotes = [
+    'Тіло досягає того, у що вірить розум.',
+    'Дисципліна — це міст між твоїми цілями та їх досягненням.',
+    'Сьогоднішній біль — це твоя завтрашня сила.',
+    'Не зупиняйся, коли втомився. Зупиняйся, коли закінчив.',
+    "Кожне тяжке тренування — це крок до залізного здоров'я.",
+    'Результат не прийде сам, за ним треба йти.',
+    'Піт — це сльози твого жиру.',
+    'Твоє тіло може все. Головне — переконати свій розум.',
+    "Тижня має 7 днів. І 'Колись' — не один із них.",
+    'Жоден чемпіон не став таким без поту і болю.',
+    "Зроби сьогодні те, за що завтра скажеш собі 'дякую'.",
+    'Успіх — це сума маленьких зусиль, що повторюються день у день.',
+    'Біль тимчасовий, тріумф — вічний.',
+    'Твоя головна конкуренція — це ти вчорашній.',
+    'Слабкість — це вибір. Сила — це рішення.',
+    'Чим важчий бій, тим солодша перемога.',
+    'Неважливо, наскільки повільно ти прогресуєш, ти все одно обганяєш тих, хто лежить на дивані.',
+    'Твій єдиний ліміт — це ти сам.',
+    'Мотивація змушує почати. Дисципліна змушує продовжувати.',
+    'Тренажерний зал — це місце, де слабкість перетворюється на силу.',
+    'Роби те, що повинен, поки не зможеш робити те, що хочеш.',
+    'Не жалій себе. Жалій тих, хто навіть не спробував.',
+    'Щодня ставай на 1% кращим.',
+    'Краще втомитися від тренування, ніж від слабкості.',
+    'Твоє тіло — це відображення твого способу життя.',
+    'Переможці фокусуються на перемозі, невдахи фокусуються на переможцях.',
+    'Зміни починаються в кінці твоєї зони комфорту.',
+    'Характер кується там, де закінчуються сили.',
+    'Якщо хочеш мати те, чого ніколи не мав, доведеться робити те, чого ніколи не робив.',
+    'Залізо ніколи не бреше. Воно завжди дає рівно те, що ти в нього вклав.',
+];
+
+const backgroundImages = [
+    'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1571731956622-f1c840b71b1e?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1605296867304-46d5465a13f4?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1526506159807-1c6e091a8ffc?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1584466977710-1ce99e5fa14a?q=80&w=1200&auto=format&fit=crop',
+    'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&w=1200&auto=format&fit=crop',
 ];
 
 function setRandomMotivation() {
-    const randomIndex = Math.floor(Math.random() * motivationData.length);
-    const selected = motivationData[randomIndex];
-    quoteText.textContent = `"${selected.quote}"`;
-    motivationCard.style.backgroundImage = `url('${selected.bg}')`;
+    const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+    const randomImg =
+        backgroundImages[Math.floor(Math.random() * backgroundImages.length)];
+    quoteText.textContent = `"${randomQuote}"`;
+    motivationCard.style.backgroundImage = `url('${randomImg}')`;
+}
+
+// Функція оновлення статистики на банері
+function updateBannerStats() {
+    const weights = getWeeklyWeights();
+    const goal = parseFloat(weightGoalInput.value);
+
+    if (weights.length > 0) {
+        // Сортуємо так, щоб зверху була остання (найнововіша) дата
+        weights.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const latestWeight = weights[0].weight;
+
+        bannerWeight.textContent = latestWeight;
+
+        if (!isNaN(goal) && goal > 0) {
+            const diff = Math.abs(latestWeight - goal).toFixed(1);
+            bannerGoal.textContent = diff;
+        } else {
+            bannerGoal.textContent = '--';
+        }
+    } else {
+        bannerWeight.textContent = '--';
+        bannerGoal.textContent = '--';
+    }
 }
 
 const today = new Date().toISOString().split('T')[0];
@@ -103,8 +164,10 @@ function renderWeeklyWeights() {
         return;
     }
 
+    // Сортуємо для розрахунку різниці (старі -> нові)
     weights.sort((a, b) => new Date(a.date) - new Date(b.date));
 
+    // Прораховуємо дані
     const renderData = weights.map((item, index) => {
         let diffPrev = null;
         if (index > 0) {
@@ -114,8 +177,53 @@ function renderWeeklyWeights() {
         if (!isNaN(goal) && goal > 0) {
             diffGoal = Math.abs(item.weight - goal).toFixed(1);
         }
-        return { ...item, diffPrev, diffGoal, originalIndex: index };
+        return { ...item, diffPrev, diffGoal };
     });
+
+    // Сортуємо для відображення (нові -> старі)
+    renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    renderData.forEach((item) => {
+        const formattedDate = new Date(item.date).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit' });
+        const tr = document.createElement('tr');
+        
+        let diffHtml = '';
+        if (item.diffPrev !== null) {
+            const diffNum = parseFloat(item.diffPrev);
+            if (diffNum > 0) {
+                // Стрілка вгору (приріст)
+                diffHtml = `<span class="diff-up"> (+${item.diffPrev} ⭡)</span>`;
+            } else if (diffNum < 0) {
+                // Стрілка вниз (спад)
+                diffHtml = `<span class="diff-down"> (${item.diffPrev} ⭣)</span>`;
+            } else {
+                diffHtml = `<span class="diff-goal"> (без змін)</span>`;
+            }
+        }
+
+        tr.innerHTML = `
+            <td><strong>${formattedDate}</strong></td>
+            <td>
+                <span class="weight-record">${item.weight} кг</span> ${diffHtml}
+                ${item.diffGoal ? `<br><span class="diff-goal">(до цілі: ${item.diffGoal} кг)</span>` : ''}
+            </td>
+            <td><button class="delete-w-btn" data-id="${item.id}">❌</button></td>
+        `;
+        weeklyWeightTableBody.appendChild(tr);
+    });
+
+    // Фінальне видалення через ID
+    document.querySelectorAll('.delete-w-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const idToDelete = parseInt(e.currentTarget.getAttribute('data-id'));
+            let currentWeights = getWeeklyWeights();
+            currentWeights = currentWeights.filter(w => w.id !== idToDelete); // Фільтруємо за ID
+            saveWeeklyWeights(currentWeights);
+            renderWeeklyWeights();
+            updateBannerStats(); // Оновлюємо банер після видалення
+        });
+    });
+}
 
     renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
