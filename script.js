@@ -25,6 +25,13 @@ const themeToggle = document.getElementById('themeToggle');
 const motivationCard = document.getElementById('motivationCard');
 const quoteText = document.getElementById('quoteText');
 
+// Селектори нової таблиці
+const weeklyWeightInput = document.getElementById('weeklyWeightInput');
+const addWeeklyWeightBtn = document.getElementById('addWeeklyWeightBtn');
+const weeklyWeightTableBody = document.querySelector(
+    '#weeklyWeightTable tbody',
+);
+
 // Робочі змінні
 let currentWater = 0;
 const WATER_TARGET = 12;
@@ -53,7 +60,6 @@ const motivationData = [
     },
 ];
 
-// 1. Встановлення випадкової мотивації при старті сторінки
 function setRandomMotivation() {
     const randomIndex = Math.floor(Math.random() * motivationData.length);
     const selected = motivationData[randomIndex];
@@ -61,11 +67,9 @@ function setRandomMotivation() {
     motivationCard.style.backgroundImage = `url('${selected.bg}')`;
 }
 
-// 2. Налаштування поточної дати (сьогодні)
 const today = new Date().toISOString().split('T')[0];
 dateSelect.value = today;
 
-// 3. Логіка Темної Теми
 if (localStorage.getItem('fit_theme') === 'dark') {
     document.body.classList.add('dark-mode');
     themeToggle.textContent = '☀️ Світла тема';
@@ -82,7 +86,6 @@ themeToggle.addEventListener('click', () => {
     }
 });
 
-// 4. Робота з базою даних localStorage
 function getMasterData() {
     return JSON.parse(localStorage.getItem('fit_master_history')) || {};
 }
@@ -91,14 +94,12 @@ function saveMasterData(data) {
     localStorage.setItem('fit_master_history', JSON.stringify(data));
 }
 
-// 5. Оновлення візуального прогресу води
 function updateWaterUI() {
     waterCountEl.textContent = currentWater;
     const percentage = Math.min((currentWater / WATER_TARGET) * 100, 100);
     waterProgressBar.style.width = `${percentage}%`;
 }
 
-// 6. Розрахунок ваги до цілі (85 кг)
 function updateWeightTargetUI() {
     const currentWeight = parseFloat(weightInput.value);
     if (currentWeight && currentWeight > 85) {
@@ -112,7 +113,72 @@ function updateWeightTargetUI() {
 }
 weightInput.addEventListener('input', updateWeightTargetUI);
 
-// 7. Завантаження даних для обраної дати
+// ЛОГІКА ЩОТИЖНЕВИХ ЗВАЖУВАНЬ (ТАБЛИЦЯ)
+function getWeeklyWeights() {
+    return JSON.parse(localStorage.getItem('fit_weekly_weights')) || [];
+}
+
+function saveWeeklyWeights(data) {
+    localStorage.setItem('fit_weekly_weights', JSON.stringify(data));
+}
+
+function renderWeeklyWeights() {
+    const weights = getWeeklyWeights();
+    weeklyWeightTableBody.innerHTML = '';
+
+    // Сортуємо: свіжі зважування зверху
+    weights.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (weights.length === 0) {
+        weeklyWeightTableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-secondary); font-style:italic; padding:1.5rem 0;">Немає записів</td></tr>`;
+        return;
+    }
+
+    weights.forEach((item, index) => {
+        const formattedDate = new Date(item.date).toLocaleDateString('uk-UA', {
+            day: 'numeric',
+            month: 'numeric',
+        });
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${formattedDate}</strong></td>
+            <td>${item.weight} кг</td>
+            <td><button class="delete-w-btn" data-index="${index}">❌</button></td>
+        `;
+        weeklyWeightTableBody.appendChild(tr);
+    });
+
+    // Навішуємо видалення на хрестики
+    document.querySelectorAll('.delete-w-btn').forEach((btn) => {
+        btn.addEventListener('click', (e) => {
+            const idx = e.target.getAttribute('data-index');
+            const currentWeights = getWeeklyWeights();
+            currentWeights.sort((a, b) => new Date(b.date) - new Date(a.date));
+            currentWeights.splice(idx, 1);
+            saveWeeklyWeights(currentWeights);
+            renderWeeklyWeights();
+        });
+    });
+}
+
+addWeeklyWeightBtn.addEventListener('click', () => {
+    const weight = parseFloat(weeklyWeightInput.value);
+    if (!weight || weight <= 0) {
+        alert('Будь ласка, введіть коректну вагу');
+        return;
+    }
+
+    const currentWeights = getWeeklyWeights();
+    currentWeights.push({
+        date: new Date().toISOString().split('T')[0], // Зберігаємо поточну дату
+        weight: weight,
+    });
+
+    saveWeeklyWeights(currentWeights);
+    weeklyWeightInput.value = '';
+    renderWeeklyWeights();
+});
+
 function loadDayData() {
     const selectedDate = dateSelect.value;
     const masterData = getMasterData();
@@ -125,15 +191,11 @@ function loadDayData() {
         omega3.checked = dayData.omega3 || false;
         magnesium.checked = dayData.magnesium || false;
         ashwa.checked = dayData.ashwa || false;
-
-        // Нові добавки (з безпечною перевіркою)
         lcarnitine.checked = dayData.lcarnitine || false;
         vitB.checked = dayData.vitB || false;
-
         weightInput.value = dayData.weight || '';
         dayNotes.value = dayData.notes || '';
     } else {
-        // Якщо день новий — обнуляємо все, окрім останньої ваги
         programDaySelect.value = 'Відпочинок';
         currentWater = 0;
         vitD3.checked = false;
@@ -155,9 +217,10 @@ function loadDayData() {
     updateWaterUI();
     updateWeightTargetUI();
     renderHistoryList();
-    setRandomMotivation(); // Оновлюємо цитату при зміні дати
+    setRandomMotivation();
 }
 
+dateSelect.value = today;
 dateSelect.addEventListener('change', loadDayData);
 
 btnPlus.addEventListener('click', () => {
@@ -171,7 +234,6 @@ btnMinus.addEventListener('click', () => {
     }
 });
 
-// 8. Збереження поточної дати
 saveBtn.addEventListener('click', () => {
     const selectedDate = dateSelect.value;
     const masterData = getMasterData();
@@ -196,7 +258,6 @@ saveBtn.addEventListener('click', () => {
     setTimeout(() => statusMsg.classList.add('hidden'), 2000);
 });
 
-// 9. Кнопка очищення дня
 resetBtn.addEventListener('click', () => {
     if (confirm('Очистити всі записи за цей день?')) {
         const selectedDate = dateSelect.value;
@@ -207,7 +268,6 @@ resetBtn.addEventListener('click', () => {
     }
 });
 
-// 10. Генерація списку історії на екрані
 function renderHistoryList() {
     const masterData = getMasterData();
     const sortedDates = Object.keys(masterData).sort().reverse();
@@ -229,7 +289,6 @@ function renderHistoryList() {
         const item = document.createElement('div');
         item.className = 'history-item';
 
-        // Формуємо список добавок
         let supplements = [];
         if (day.vitD3) supplements.push('D3');
         if (day.omega3) supplements.push('Омега-3');
@@ -250,5 +309,6 @@ function renderHistoryList() {
     });
 }
 
-// Старт додатку
+// Запуск при першому старті сторінки
 loadDayData();
+renderWeeklyWeights();

@@ -123,6 +123,39 @@
                         <p id="weightLeft" class="weight-left-info"></p>
                     </section>
                 </div>
+
+                <div class="grid-column">
+                    <section class="card weekly-card">
+                        <h2>📊 Контрольні зважування</h2>
+                        <div class="weekly-form">
+                            <input
+                                type="number"
+                                id="weeklyWeightInput"
+                                placeholder="Вага (кг)"
+                                step="0.1"
+                            />
+                            <button
+                                id="addWeeklyWeightBtn"
+                                class="primary-btn mini-btn"
+                            >
+                                Записати
+                            </button>
+                        </div>
+
+                        <div class="table-container">
+                            <table id="weeklyWeightTable">
+                                <thead>
+                                    <tr>
+                                        <th>Дата</th>
+                                        <th>Вага</th>
+                                        <th style="text-align: center">Дія</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
             </div>
             <div class="action-buttons">
                 <button id="saveBtn" class="primary-btn">Зберегти день</button>

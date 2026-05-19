@@ -71,7 +71,7 @@ textarea {
 }
 
 .container {
-    width: min(1140px, calc(100% - 2rem));
+    width: min(1200px, calc(100% - 2rem));
     margin: 2rem auto 3rem;
     padding: 2rem;
     background: var(--card);
@@ -151,13 +151,11 @@ textarea {
     letter-spacing: -0.03em;
     font-weight: 800;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    /* Додаємо ці два рядки, щоб текст автоматично ділився на стовпчик */
     display: flex;
     flex-direction: column;
     gap: 0.3rem;
 }
 
-/* Стилізуємо назву щоденника під іменем, щоб вона була трохи меншою і витонченішою */
 .motivation-content h1 .subtitle {
     font-size: clamp(1.2rem, 1.8vw, 1.5rem);
     font-weight: 500;
@@ -173,10 +171,10 @@ textarea {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* НАЛАШТУВАННЯ СІТКИ GRID */
+/* НАЛАШТУВАННЯ СІТКИ GRID (3 КОЛОНКИ) */
 .main-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     margin-bottom: 1.5rem;
 }
@@ -191,7 +189,7 @@ textarea {
     border: 1px solid var(--card-border);
     border-radius: 20px;
     padding: 1.6rem;
-    margin-bottom: 0; /* Контролюється сіткою */
+    margin-bottom: 0;
     flex-grow: 1;
 }
 
@@ -324,7 +322,6 @@ textarea {
 .checkbox-group label:hover {
     background: var(--water-btn-bg);
 }
-
 .checkbox-group input {
     width: 1.1rem;
     height: 1.1rem;
@@ -337,7 +334,6 @@ textarea {
     gap: 1rem;
     align-items: center;
 }
-
 .target-badge {
     padding: 0.85rem 1.2rem;
     border-radius: 14px;
@@ -346,12 +342,65 @@ textarea {
     font-weight: bold;
     white-space: nowrap;
 }
-
 .weight-left-info {
     margin-top: 1rem;
     text-align: left;
     font-weight: 700;
     color: var(--success);
+}
+
+/* СТИЛІ ДЛЯ ТАБЛИЦІ ЩОТИЖНЕВОЇ ВАГИ */
+.weekly-form {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.mini-btn {
+    padding: 0 1rem !important;
+    font-size: 0.95rem !important;
+    flex: none !important;
+    width: auto !important;
+}
+
+.table-container {
+    width: 100%;
+    max-height: 280px;
+    overflow-y: auto;
+    margin-top: 0.5rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    text-align: left;
+}
+
+th,
+td {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--checkbox-bg);
+}
+
+th {
+    color: var(--accent-strong);
+    font-weight: 700;
+}
+
+.delete-w-btn {
+    background: none;
+    border: none;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0;
+    display: block;
+    margin: 0 auto;
+}
+
+.delete-w-btn:hover {
+    transform: scale(1.2);
 }
 
 /* КНОПКИ ДІЙ */
@@ -360,7 +409,6 @@ textarea {
     gap: 1rem;
     margin: 1.5rem 0;
 }
-
 .primary-btn,
 .danger-btn {
     flex: 1;
@@ -374,25 +422,21 @@ textarea {
         transform 0.2s ease,
         filter 0.2s ease;
 }
-
 .primary-btn {
     background: linear-gradient(135deg, var(--accent), #0ea5e9);
     color: #ffffff;
     box-shadow: 0 4px 15px rgba(14, 165, 233, 0.25);
 }
-
 .danger-btn {
     background: rgba(248, 113, 113, 0.15);
     color: var(--danger);
     border: 1px solid rgba(248, 113, 113, 0.2);
 }
-
 .primary-btn:hover,
 .danger-btn:hover {
     transform: translateY(-2px);
     filter: brightness(1.05);
 }
-
 .primary-btn:active,
 .danger-btn:active {
     transform: translateY(0);
@@ -413,26 +457,22 @@ textarea {
 .history-card {
     margin-top: 1.5rem;
 }
-
 .history-card #historyLog {
     display: grid;
     gap: 1rem;
 }
-
 .history-item {
     padding: 1.2rem;
     background: var(--checkbox-bg);
     border-radius: 14px;
     border: 1px solid var(--card-border);
 }
-
 .history-date {
     font-weight: 800;
     color: var(--accent);
     margin-bottom: 0.4rem;
     font-size: 1rem;
 }
-
 .empty-history {
     text-align: center;
     color: var(--text-secondary);
@@ -440,15 +480,21 @@ textarea {
     padding: 2rem 0;
 }
 
-/* АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ (МЕНШЕ 768px) */
+/* АДАПТИВНІСТЬ ДЛЯ ПЛАНШЕТІВ ТА МОБІЛЬНИХ */
+@media (max-width: 1024px) {
+    .main-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    .checkbox-group {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 @media (max-width: 768px) {
     .container {
         padding: 1.2rem;
         margin: 1rem auto;
-    }
-    .main-grid {
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
     }
     .checkbox-group {
         grid-template-columns: 1fr;
@@ -463,5 +509,5 @@ textarea {
     }
     .grid-column .card:not(:last-child) {
         margin-bottom: 0;
-    } /* Відступи бере на себе grid-gap */
+    }
 }
