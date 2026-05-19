@@ -164,10 +164,8 @@ function renderWeeklyWeights() {
         return;
     }
 
-    // Сортуємо для розрахунку різниці (старі -> нові)
     weights.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    // Прораховуємо дані
     const renderData = weights.map((item, index) => {
         let diffPrev = null;
         if (index > 0) {
@@ -177,53 +175,8 @@ function renderWeeklyWeights() {
         if (!isNaN(goal) && goal > 0) {
             diffGoal = Math.abs(item.weight - goal).toFixed(1);
         }
-        return { ...item, diffPrev, diffGoal };
+        return { ...item, diffPrev, diffGoal, originalIndex: index };
     });
-
-    // Сортуємо для відображення (нові -> старі)
-    renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    renderData.forEach((item) => {
-        const formattedDate = new Date(item.date).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit' });
-        const tr = document.createElement('tr');
-        
-        let diffHtml = '';
-        if (item.diffPrev !== null) {
-            const diffNum = parseFloat(item.diffPrev);
-            if (diffNum > 0) {
-                // Стрілка вгору (приріст)
-                diffHtml = `<span class="diff-up"> (+${item.diffPrev} ⭡)</span>`;
-            } else if (diffNum < 0) {
-                // Стрілка вниз (спад)
-                diffHtml = `<span class="diff-down"> (${item.diffPrev} ⭣)</span>`;
-            } else {
-                diffHtml = `<span class="diff-goal"> (без змін)</span>`;
-            }
-        }
-
-        tr.innerHTML = `
-            <td><strong>${formattedDate}</strong></td>
-            <td>
-                <span class="weight-record">${item.weight} кг</span> ${diffHtml}
-                ${item.diffGoal ? `<br><span class="diff-goal">(до цілі: ${item.diffGoal} кг)</span>` : ''}
-            </td>
-            <td><button class="delete-w-btn" data-id="${item.id}">❌</button></td>
-        `;
-        weeklyWeightTableBody.appendChild(tr);
-    });
-
-    // Фінальне видалення через ID
-    document.querySelectorAll('.delete-w-btn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const idToDelete = parseInt(e.currentTarget.getAttribute('data-id'));
-            let currentWeights = getWeeklyWeights();
-            currentWeights = currentWeights.filter(w => w.id !== idToDelete); // Фільтруємо за ID
-            saveWeeklyWeights(currentWeights);
-            renderWeeklyWeights();
-            updateBannerStats(); // Оновлюємо банер після видалення
-        });
-    });
-}
 
     renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
 
