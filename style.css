@@ -511,3 +511,25 @@ th {
         margin-bottom: 0;
     }
 }
+
+/* Повертаємо зникнення тексту про збереження */
+.hidden {
+    display: none !important;
+}
+
+/* Робимо форму зважування красивою (в рядок) */
+.weekly-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+@media (max-width: 768px) {
+    .weekly-form {
+        grid-template-columns: 1fr 1fr;
+    }
+    .weekly-form button {
+        grid-column: span 2;
+    }
+}
