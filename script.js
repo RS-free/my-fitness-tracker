@@ -34,7 +34,7 @@ let currentWater = 0;
 const WATER_TARGET = 12;
 let statusTimeout;
 
-// База Мотивації
+// БАЗА МОТИВАЦІЇ
 const quotes = [
     'Тіло досягає того, у що вірить розум.',
     'Дисципліна — це міст між твоїми цілями та їх досягненням.',
@@ -46,23 +46,6 @@ const quotes = [
     'Твоє тіло може все. Головне — переконати свій розум.',
     "Тижня має 7 днів. І 'Колись' — не один із них.",
     'Жоден чемпіон не став таким без поту і болю.',
-    "Зроби сьогодні те, за що завтра скажеш собі 'дякую'.",
-    'Успіх — це сума маленьких зусиль.',
-    'Біль тимчасовий, тріумф — вічний.',
-    'Твоя головна конкуренція — це ти вчорашній.',
-    'Слабкість — це вибір. Сила — це рішення.',
-    'Чим важчий бій, тим солодша перемога.',
-    'Твій єдиний ліміт — це ти сам.',
-    'Мотивація змушує почати. Дисципліна змушує продовжувати.',
-    'Роби те, що повинен, поки не зможеш робити те, що хочеш.',
-    'Не жалій себе. Жалій тих, хто навіть не спробував.',
-    'Щодня ставай на 1% кращим.',
-    'Краще втомитися від тренування, ніж від слабкості.',
-    'Твоє тіло — це відображення твого способу життя.',
-    'Переможці фокусуються на перемозі.',
-    'Зміни починаються в кінці твоєї зони комфорту.',
-    'Характер кується там, де закінчуються сили.',
-    'Залізо ніколи не бреше. Воно завжди дає рівно те, що ти в нього вклав.',
 ];
 
 const backgroundImages = [
@@ -72,18 +55,39 @@ const backgroundImages = [
     'https://images.unsplash.com/photo-1571731956622-f1c840b71b1e?q=80&w=1200&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=1200&auto=format&fit=crop',
     'https://images.unsplash.com/photo-1599058917212-d750089bc07e?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1605296867304-46d5465a13f4?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1526506159807-1c6e091a8ffc?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1534258936925-c58bed479fcb?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1584466977710-1ce99e5fa14a?q=80&w=1200&auto=format&fit=crop',
-    'https://images.unsplash.com/photo-1517963879433-6ad2b056d712?q=80&w=1200&auto=format&fit=crop',
 ];
 
 function setRandomMotivation() {
-    if (!quoteText || !motivationCard) return; // Захист від падіння
-    quoteText.textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
-    motivationCard.style.backgroundImage = `url('${backgroundImages[Math.floor(Math.random() * backgroundImages.length)]}')`;
+    try {
+        if (!quoteText || !motivationCard) return;
+        quoteText.textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+        motivationCard.style.backgroundImage = `url('${backgroundImages[Math.floor(Math.random() * backgroundImages.length)]}')`;
+    } catch (e) {
+        console.error('Помилка мотивації:', e);
+    }
+}
+
+// БЕЗПЕЧНІ ФУНКЦІЇ ДЛЯ ПАМ'ЯТІ (Щоб дані точно зберігалися)
+function getWeeklyWeights() {
+    try {
+        return JSON.parse(localStorage.getItem('fit_weekly_weights')) || [];
+    } catch (e) {
+        return [];
+    }
+}
+function saveWeeklyWeights(data) {
+    localStorage.setItem('fit_weekly_weights', JSON.stringify(data));
+}
+
+function getMasterData() {
+    try {
+        return JSON.parse(localStorage.getItem('fit_master_history')) || {};
+    } catch (e) {
+        return {};
+    }
+}
+function saveMasterData(data) {
+    localStorage.setItem('fit_master_history', JSON.stringify(data));
 }
 
 // ЛОГІКА ЗВАЖУВАННЯ
@@ -95,21 +99,14 @@ if (weightGoalInput) {
     });
 }
 
-function getWeeklyWeights() {
-    return JSON.parse(localStorage.getItem('fit_weekly_weights')) || [];
-}
-function saveWeeklyWeights(data) {
-    localStorage.setItem('fit_weekly_weights', JSON.stringify(data));
-}
-
 function updateBannerStats() {
-    if (!bannerWeight || !bannerGoal) return; // Захист від падіння
+    if (!bannerWeight || !bannerGoal) return;
     const weights = getWeeklyWeights();
     const goalStr = weightGoalInput ? weightGoalInput.value.trim() : '';
     const goal = goalStr !== '' ? parseFloat(goalStr) : NaN;
 
     if (weights.length > 0) {
-        // Для банера завжди шукаємо найновішу дату
+        // Завжди показуємо найсвіжішу дату на банері
         const sortedForBanner = [...weights].sort(
             (a, b) => new Date(b.date) - new Date(a.date),
         );
@@ -139,10 +136,10 @@ function renderWeeklyWeights() {
         return;
     }
 
-    // Сортуємо в хронологічному порядку: від старого до нового
+    // Хронологічний порядок (старі зверху, нові знизу) для розрахунку та виводу
     weights.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-    const renderData = weights.map((item, index) => {
+    weights.forEach((item, index) => {
         let diffPrev =
             index > 0
                 ? (item.weight - weights[index - 1].weight).toFixed(1)
@@ -151,25 +148,21 @@ function renderWeeklyWeights() {
             !isNaN(goal) && goal > 0
                 ? Math.abs(item.weight - goal).toFixed(1)
                 : null;
-        return { ...item, diffPrev, diffGoal };
-    });
 
-    // Виводимо масив на екран у тому ж хронологічному порядку (як просив користувач)
-    renderData.forEach((item) => {
         const tr = document.createElement('tr');
         let diffHtml = '';
-        if (item.diffPrev !== null) {
-            const val = parseFloat(item.diffPrev);
+        if (diffPrev !== null) {
+            const val = parseFloat(diffPrev);
             if (val > 0)
-                diffHtml = `<span class="diff-up"> (+${item.diffPrev} ▲)</span>`;
+                diffHtml = `<span class="diff-up"> (+${diffPrev} ▲)</span>`;
             else if (val < 0)
-                diffHtml = `<span class="diff-down"> (${item.diffPrev} ▼)</span>`;
+                diffHtml = `<span class="diff-down"> (${diffPrev} ▼)</span>`;
             else diffHtml = `<span class="diff-goal"> (без змін)</span>`;
         }
 
         tr.innerHTML = `
             <td><strong>${new Date(item.date).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit' })}</strong></td>
-            <td><span class="weight-record">${item.weight} кг</span>${diffHtml}${item.diffGoal ? `<br><span class="diff-goal">(до цілі: ${item.diffGoal} кг)</span>` : ''}</td>
+            <td><span class="weight-record">${item.weight} кг</span>${diffHtml}${diffGoal ? `<br><span class="diff-goal">(до цілі: ${diffGoal} кг)</span>` : ''}</td>
             <td><button class="delete-w-btn" data-date="${item.date}">❌</button></td>
         `;
         weeklyWeightTableBody.appendChild(tr);
@@ -192,15 +185,16 @@ if (addWeeklyWeightBtn) {
     addWeeklyWeightBtn.addEventListener('click', () => {
         const weights = getWeeklyWeights();
         const inputWeight = parseFloat(weeklyWeightInput.value);
-        if (!inputWeight || inputWeight <= 0 || !weeklyDateInput.value) {
+        const selDate = weeklyDateInput.value;
+
+        if (!inputWeight || inputWeight <= 0 || !selDate) {
             alert('Будь ласка, оберіть дату та введіть коректну вагу');
             return;
         }
-        const existing = weights.findIndex(
-            (w) => w.date === weeklyDateInput.value,
-        );
+
+        const existing = weights.findIndex((w) => w.date === selDate);
         if (existing !== -1) weights[existing].weight = inputWeight;
-        else weights.push({ date: weeklyDateInput.value, weight: inputWeight });
+        else weights.push({ date: selDate, weight: inputWeight });
 
         saveWeeklyWeights(weights);
         weeklyWeightInput.value = '';
@@ -209,8 +203,15 @@ if (addWeeklyWeightBtn) {
 }
 
 // ДЕННІ ЗАПИСИ
+function updateWaterUI() {
+    if (waterCountEl) waterCountEl.textContent = currentWater;
+    if (waterProgressBar)
+        waterProgressBar.style.width = `${Math.min((currentWater / WATER_TARGET) * 100, 100)}%`;
+}
+
 function loadDayData() {
-    const data = JSON.parse(localStorage.getItem('fit_master_history')) || {};
+    if (!dateSelect) return;
+    const data = getMasterData();
     const d = data[dateSelect.value] || {};
 
     if (programDaySelect) programDaySelect.value = d.programDay || 'Відпочинок';
@@ -228,10 +229,7 @@ function loadDayData() {
     setRandomMotivation();
 }
 
-if (dateSelect) {
-    dateSelect.addEventListener('change', loadDayData);
-}
-
+if (dateSelect) dateSelect.addEventListener('change', loadDayData);
 if (btnPlus)
     btnPlus.addEventListener('click', () => {
         currentWater++;
@@ -247,8 +245,7 @@ if (btnMinus)
 
 if (saveBtn) {
     saveBtn.addEventListener('click', () => {
-        const data =
-            JSON.parse(localStorage.getItem('fit_master_history')) || {};
+        const data = getMasterData();
         data[dateSelect.value] = {
             programDay: programDaySelect
                 ? programDaySelect.value
@@ -262,8 +259,7 @@ if (saveBtn) {
             vitB: vitB ? vitB.checked : false,
             notes: dayNotes ? dayNotes.value : '',
         };
-        localStorage.setItem('fit_master_history', JSON.stringify(data));
-
+        saveMasterData(data);
         loadDayData();
 
         clearTimeout(statusTimeout);
@@ -280,10 +276,9 @@ if (saveBtn) {
 if (resetBtn) {
     resetBtn.addEventListener('click', () => {
         if (confirm('Очистити всі записи за цей день?')) {
-            const data =
-                JSON.parse(localStorage.getItem('fit_master_history')) || {};
+            const data = getMasterData();
             delete data[dateSelect.value];
-            localStorage.setItem('fit_master_history', JSON.stringify(data));
+            saveMasterData(data);
             loadDayData();
         }
     });
@@ -291,8 +286,7 @@ if (resetBtn) {
 
 function renderHistoryList() {
     if (!historyLog) return;
-    const masterData =
-        JSON.parse(localStorage.getItem('fit_master_history')) || {};
+    const masterData = getMasterData();
     const sortedDates = Object.keys(masterData).sort().reverse();
 
     if (sortedDates.length === 0) {
@@ -335,13 +329,11 @@ function renderHistoryList() {
     });
 }
 
-// Ініціалізація
-if (dateSelect) {
-    dateSelect.value = new Date().toISOString().split('T')[0];
-}
-if (weeklyDateInput) {
-    const defaultDate = new Date().toISOString().split('T')[0];
-    weeklyDateInput.value = dateSelect ? dateSelect.value : defaultDate;
-}
+// ІНІЦІАЛІЗАЦІЯ ПРИ ЗАПУСКУ
+if (dateSelect) dateSelect.value = new Date().toISOString().split('T')[0];
+if (weeklyDateInput)
+    weeklyDateInput.value = dateSelect
+        ? dateSelect.value
+        : new Date().toISOString().split('T')[0];
 loadDayData();
 renderWeeklyWeights();
