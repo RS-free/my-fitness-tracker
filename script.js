@@ -34,7 +34,7 @@ let currentWater = 0;
 const WATER_TARGET = 12;
 let statusTimeout;
 
-// Мотивація
+// База Мотивації
 const quotes = [
     'Тіло досягає того, у що вірить розум.',
     'Дисципліна — це міст між твоїми цілями та їх досягненням.',
@@ -81,16 +81,19 @@ const backgroundImages = [
 ];
 
 function setRandomMotivation() {
+    if (!quoteText || !motivationCard) return; // Захист від падіння
     quoteText.textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
     motivationCard.style.backgroundImage = `url('${backgroundImages[Math.floor(Math.random() * backgroundImages.length)]}')`;
 }
 
 // ЛОГІКА ЗВАЖУВАННЯ
-weightGoalInput.value = localStorage.getItem('fit_weight_goal') || '';
-weightGoalInput.addEventListener('input', (e) => {
-    localStorage.setItem('fit_weight_goal', e.target.value);
-    renderWeeklyWeights();
-});
+if (weightGoalInput) {
+    weightGoalInput.value = localStorage.getItem('fit_weight_goal') || '';
+    weightGoalInput.addEventListener('input', (e) => {
+        localStorage.setItem('fit_weight_goal', e.target.value);
+        renderWeeklyWeights();
+    });
+}
 
 function getWeeklyWeights() {
     return JSON.parse(localStorage.getItem('fit_weekly_weights')) || [];
@@ -100,13 +103,18 @@ function saveWeeklyWeights(data) {
 }
 
 function updateBannerStats() {
+    if (!bannerWeight || !bannerGoal) return; // Захист від падіння
     const weights = getWeeklyWeights();
-    const goalStr = weightGoalInput.value.trim();
+    const goalStr = weightGoalInput ? weightGoalInput.value.trim() : '';
     const goal = goalStr !== '' ? parseFloat(goalStr) : NaN;
 
     if (weights.length > 0) {
-        weights.sort((a, b) => new Date(b.date) - new Date(a.date));
-        const latest = weights[0].weight;
+        // Для банера завжди шукаємо найновішу дату
+        const sortedForBanner = [...weights].sort(
+            (a, b) => new Date(b.date) - new Date(a.date),
+        );
+        const latest = sortedForBanner[0].weight;
+
         bannerWeight.textContent = latest;
         bannerGoal.textContent =
             !isNaN(goal) && goal > 0
@@ -119,9 +127,10 @@ function updateBannerStats() {
 }
 
 function renderWeeklyWeights() {
+    if (!weeklyWeightTableBody) return;
     const weights = getWeeklyWeights();
     weeklyWeightTableBody.innerHTML = '';
-    const goalStr = weightGoalInput.value.trim();
+    const goalStr = weightGoalInput ? weightGoalInput.value.trim() : '';
     const goal = goalStr !== '' ? parseFloat(goalStr) : NaN;
 
     if (weights.length === 0) {
@@ -130,6 +139,7 @@ function renderWeeklyWeights() {
         return;
     }
 
+    // Сортуємо в хронологічному порядку: від старого до нового
     weights.sort((a, b) => new Date(a.date) - new Date(b.date));
 
     const renderData = weights.map((item, index) => {
@@ -144,8 +154,7 @@ function renderWeeklyWeights() {
         return { ...item, diffPrev, diffGoal };
     });
 
-    renderData.sort((a, b) => new Date(b.date) - new Date(a.date));
-
+    // Виводимо масив на екран у тому ж хронологічному порядку (як просив користувач)
     renderData.forEach((item) => {
         const tr = document.createElement('tr');
         let diffHtml = '';
@@ -179,87 +188,109 @@ function renderWeeklyWeights() {
     updateBannerStats();
 }
 
-addWeeklyWeightBtn.addEventListener('click', () => {
-    const weights = getWeeklyWeights();
-    const inputWeight = parseFloat(weeklyWeightInput.value);
-    if (!inputWeight || inputWeight <= 0 || !weeklyDateInput.value) {
-        alert('Будь ласка, оберіть дату та введіть коректну вагу');
-        return;
-    }
-    const existing = weights.findIndex((w) => w.date === weeklyDateInput.value);
-    if (existing !== -1) weights[existing].weight = inputWeight;
-    else weights.push({ date: weeklyDateInput.value, weight: inputWeight });
+if (addWeeklyWeightBtn) {
+    addWeeklyWeightBtn.addEventListener('click', () => {
+        const weights = getWeeklyWeights();
+        const inputWeight = parseFloat(weeklyWeightInput.value);
+        if (!inputWeight || inputWeight <= 0 || !weeklyDateInput.value) {
+            alert('Будь ласка, оберіть дату та введіть коректну вагу');
+            return;
+        }
+        const existing = weights.findIndex(
+            (w) => w.date === weeklyDateInput.value,
+        );
+        if (existing !== -1) weights[existing].weight = inputWeight;
+        else weights.push({ date: weeklyDateInput.value, weight: inputWeight });
 
-    saveWeeklyWeights(weights);
-    weeklyWeightInput.value = '';
-    renderWeeklyWeights();
-});
+        saveWeeklyWeights(weights);
+        weeklyWeightInput.value = '';
+        renderWeeklyWeights();
+    });
+}
 
 // ДЕННІ ЗАПИСИ
 function loadDayData() {
     const data = JSON.parse(localStorage.getItem('fit_master_history')) || {};
     const d = data[dateSelect.value] || {};
 
-    programDaySelect.value = d.programDay || 'Відпочинок';
+    if (programDaySelect) programDaySelect.value = d.programDay || 'Відпочинок';
     currentWater = d.water || 0;
-    vitD3.checked = d.vitD3 || false;
-    omega3.checked = d.omega3 || false;
-    magnesium.checked = d.magnesium || false;
-    ashwa.checked = d.ashwa || false;
-    lcarnitine.checked = d.lcarnitine || false;
-    vitB.checked = d.vitB || false;
-    dayNotes.value = d.notes || '';
+    if (vitD3) vitD3.checked = d.vitD3 || false;
+    if (omega3) omega3.checked = d.omega3 || false;
+    if (magnesium) magnesium.checked = d.magnesium || false;
+    if (ashwa) ashwa.checked = d.ashwa || false;
+    if (lcarnitine) lcarnitine.checked = d.lcarnitine || false;
+    if (vitB) vitB.checked = d.vitB || false;
+    if (dayNotes) dayNotes.value = d.notes || '';
 
     updateWaterUI();
     renderHistoryList();
     setRandomMotivation();
 }
 
-dateSelect.addEventListener('change', loadDayData);
-btnPlus.addEventListener('click', () => {
-    currentWater++;
-    updateWaterUI();
-});
-btnMinus.addEventListener('click', () => {
-    if (currentWater > 0) {
-        currentWater--;
+if (dateSelect) {
+    dateSelect.addEventListener('change', loadDayData);
+}
+
+if (btnPlus)
+    btnPlus.addEventListener('click', () => {
+        currentWater++;
         updateWaterUI();
-    }
-});
+    });
+if (btnMinus)
+    btnMinus.addEventListener('click', () => {
+        if (currentWater > 0) {
+            currentWater--;
+            updateWaterUI();
+        }
+    });
 
-saveBtn.addEventListener('click', () => {
-    const data = JSON.parse(localStorage.getItem('fit_master_history')) || {};
-    data[dateSelect.value] = {
-        programDay: programDaySelect.value,
-        water: currentWater,
-        vitD3: vitD3.checked,
-        omega3: omega3.checked,
-        magnesium: magnesium.checked,
-        ashwa: ashwa.checked,
-        lcarnitine: lcarnitine.checked,
-        vitB: vitB.checked,
-        notes: dayNotes.value,
-    };
-    localStorage.setItem('fit_master_history', JSON.stringify(data));
-
-    loadDayData(); // Оновлює історію
-
-    clearTimeout(statusTimeout);
-    statusMsg.classList.remove('hidden');
-    statusTimeout = setTimeout(() => statusMsg.classList.add('hidden'), 2500);
-});
-
-resetBtn.addEventListener('click', () => {
-    if (confirm('Очистити всі записи за цей день?')) {
+if (saveBtn) {
+    saveBtn.addEventListener('click', () => {
         const data =
             JSON.parse(localStorage.getItem('fit_master_history')) || {};
-        delete data[dateSelect.value];
+        data[dateSelect.value] = {
+            programDay: programDaySelect
+                ? programDaySelect.value
+                : 'Відпочинок',
+            water: currentWater,
+            vitD3: vitD3 ? vitD3.checked : false,
+            omega3: omega3 ? omega3.checked : false,
+            magnesium: magnesium ? magnesium.checked : false,
+            ashwa: ashwa ? ashwa.checked : false,
+            lcarnitine: lcarnitine ? lcarnitine.checked : false,
+            vitB: vitB ? vitB.checked : false,
+            notes: dayNotes ? dayNotes.value : '',
+        };
         localStorage.setItem('fit_master_history', JSON.stringify(data));
-        loadDayData(); // Миттєво скидає всі галочки і форму на екрані
-    }
-});
+
+        loadDayData();
+
+        clearTimeout(statusTimeout);
+        if (statusMsg) {
+            statusMsg.classList.remove('hidden');
+            statusTimeout = setTimeout(
+                () => statusMsg.classList.add('hidden'),
+                2500,
+            );
+        }
+    });
+}
+
+if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+        if (confirm('Очистити всі записи за цей день?')) {
+            const data =
+                JSON.parse(localStorage.getItem('fit_master_history')) || {};
+            delete data[dateSelect.value];
+            localStorage.setItem('fit_master_history', JSON.stringify(data));
+            loadDayData();
+        }
+    });
+}
 
 function renderHistoryList() {
+    if (!historyLog) return;
     const masterData =
         JSON.parse(localStorage.getItem('fit_master_history')) || {};
     const sortedDates = Object.keys(masterData).sort().reverse();
@@ -305,7 +336,12 @@ function renderHistoryList() {
 }
 
 // Ініціалізація
-dateSelect.value = new Date().toISOString().split('T')[0];
-weeklyDateInput.value = dateSelect.value;
+if (dateSelect) {
+    dateSelect.value = new Date().toISOString().split('T')[0];
+}
+if (weeklyDateInput) {
+    const defaultDate = new Date().toISOString().split('T')[0];
+    weeklyDateInput.value = dateSelect ? dateSelect.value : defaultDate;
+}
 loadDayData();
 renderWeeklyWeights();
