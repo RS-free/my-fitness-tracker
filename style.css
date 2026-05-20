@@ -1,38 +1,23 @@
-/* Підключення резервних шрифтів, шрифт Volja застосовуватиметься, якщо встановлений на пристрої */
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap');
 
 :root {
-    /* МІЛІТАРІ ТЕМА (заснована на кольорах ЗСУ) */
     --bg-start: #444A38;
-    /* Олива */
     --bg-end: #23261c;
-    /* Темна Олива */
     --card: rgba(77, 70, 52, 0.85);
-    /* Мундир */
     --card-border: #6A653A;
-    /* Степ */
     --text-primary: #f8fafc;
     --text-secondary: #c2c4c7;
-    /* Світла Сталь */
     --accent: #F39200;
-    /* Золото */
     --accent-strong: #ffaa33;
-    /* Яскраве золото для підсвіток */
     --danger: #ef4444;
-    /* Класичний червоний для видалення */
     --success: #10b981;
-    /* Класичний зелений для прогресу */
     --shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
     --radius: 12px;
-    /* Більш суворі кути для мілітарі стилю */
     --input-bg: rgba(112, 114, 118, 0.2);
-    /* Сталь напівпрозора */
     --theme-btn-bg: rgba(77, 70, 52, 0.9);
     --water-btn-bg: rgba(243, 146, 0, 0.2);
     --water-btn-hover: rgba(243, 146, 0, 0.4);
     --checkbox-bg: rgba(112, 114, 118, 0.25);
-
-    /* Шрифт Volja (якщо є в системі), інакше Oswald */
     --font-military: 'Volja', 'Oswald', system-ui, sans-serif;
 }
 
@@ -49,7 +34,6 @@ body {
     background-attachment: fixed;
 }
 
-/* Застосування шрифту Volja до заголовків та кнопок */
 h1,
 h2,
 .primary-btn,
@@ -80,52 +64,23 @@ textarea {
 
 .theme-toggle-container {
     display: none;
-    /* У мілітарі стилі залишаємо одну сувору тему, кнопку ховаємо */
 }
 
-/* БАНЕР МОТИВАЦІЇ */
+/* БАНЕР ТА ЙОГО АДАПТИВНІСТЬ */
 .motivation-card {
     position: relative;
-    height: 240px;
-    /* Трохи збільшили висоту, щоб влізла статистика */
+    min-height: 240px;
     border-radius: var(--radius);
     overflow: hidden;
-    /* Залізні правила для заповнення банера картинкою */
     background-size: cover !important;
     background-position: center 30% !important;
     background-repeat: no-repeat !important;
     background-color: var(--bg-start);
-
     display: flex;
     align-items: center;
-    padding: 2rem 2.5rem !important;
+    padding: 2.5rem !important;
     margin-bottom: 2rem;
     border: 2px solid var(--accent);
-}
-
-/* СТИЛІ СТАТИСТИКИ НА БАНЕРІ */
-.banner-stats {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1.2rem;
-    flex-wrap: wrap;
-}
-
-.stat-badge {
-    background: rgba(17, 18, 36, 0.7);
-    border-left: 3px solid var(--accent);
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-family: var(--font-military);
-    color: #f8fafc;
-    font-size: 1.1rem;
-    backdrop-filter: blur(5px);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.stat-badge strong {
-    color: var(--accent);
-    font-size: 1.3rem;
 }
 
 .motivation-overlay {
@@ -134,18 +89,27 @@ textarea {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, rgba(35, 38, 28, 0.9) 0%, rgba(68, 74, 56, 0.4) 100%);
+    background: linear-gradient(90deg, rgba(35, 38, 28, 0.9) 0%, rgba(68, 74, 56, 0.5) 100%);
     z-index: 1;
 }
 
-.motivation-content {
+.motivation-content-wrapper {
     position: relative;
     z-index: 2;
-    color: #f8fafc;
-    max-width: 80%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
 }
 
-.motivation-content h1 {
+.motivation-text {
+    flex: 1;
+    min-width: 250px;
+}
+
+.motivation-text h1 {
     margin: 0 0 0.5rem;
     font-size: clamp(2rem, 3vw, 2.8rem);
     text-transform: uppercase;
@@ -155,7 +119,7 @@ textarea {
     gap: 0.3rem;
 }
 
-.motivation-content h1 .subtitle {
+.motivation-text h1 .subtitle {
     font-size: clamp(1.2rem, 1.8vw, 1.5rem);
     color: var(--accent);
 }
@@ -166,6 +130,31 @@ textarea {
     font-style: italic;
     color: #e2e8f0;
     text-shadow: 1px 1px 2px #000;
+}
+
+.banner-stats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.8rem;
+}
+
+.stat-badge {
+    background: rgba(35, 38, 28, 0.85);
+    border: 1px solid var(--accent);
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    font-family: var(--font-military);
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    white-space: nowrap;
+}
+
+.stat-badge strong {
+    color: var(--accent);
+    font-size: 1.3rem;
 }
 
 /* СІТКА GRID */
@@ -228,7 +217,6 @@ textarea {
     width: 100%;
     min-height: 120px;
     resize: vertical;
-    /* Дозволить тягнути поле вниз за куточок, якщо тексту багато */
 }
 
 /* ВОДА */
@@ -318,12 +306,11 @@ textarea {
     accent-color: var(--accent);
 }
 
-/* КОНТРОЛЬНІ ЗВАЖУВАННЯ (ПРАВА КОЛОНКА) */
+/* КОНТРОЛЬНІ ЗВАЖУВАННЯ */
 .goal-group {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    /* Додано для адаптивності на телефонах */
     gap: 1rem;
     margin-bottom: 1.5rem;
     background: rgba(112, 114, 118, 0.15);
@@ -344,11 +331,8 @@ textarea {
     min-width: 100px;
 }
 
-/* Не дасть полю цілі зплющитися */
-
 .weekly-form {
     display: flex;
-    /* Замінили жорстку сітку на гнучкий flex */
     flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1.5rem;
@@ -356,15 +340,12 @@ textarea {
 
 .weekly-form input[type="date"] {
     flex: 2;
-    /* Дата бере трохи більше місця */
     min-width: 120px;
 }
 
 .weekly-form input[type="number"] {
     flex: 1;
-    /* Вага бере залишок */
     min-width: 80px;
-    /* Мінімальна ширина, щоб поле більше ніколи не зникало */
 }
 
 .weekly-form button {
@@ -380,12 +361,15 @@ textarea {
     width: 100%;
     max-height: 280px;
     overflow-y: auto;
+    overflow-x: auto;
 }
 
+/* Додано горизонтальний скрол */
 table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.95rem;
+    min-width: 250px;
 }
 
 th,
@@ -397,6 +381,7 @@ td {
 th {
     color: var(--accent);
     font-size: 1.1rem;
+    text-align: left;
 }
 
 .weight-record {
@@ -497,6 +482,7 @@ th {
     border-radius: 8px;
     border-left: 4px solid var(--accent);
     margin-bottom: 1rem;
+    word-break: break-word;
 }
 
 .history-date {
@@ -507,7 +493,7 @@ th {
     font-size: 1.2rem;
 }
 
-/* АДАПТИВНІСТЬ */
+/* АДАПТИВНІСТЬ ДЛЯ МОБІЛЬНИХ */
 @media (max-width: 1024px) {
     .main-grid {
         grid-template-columns: 1fr;
@@ -519,18 +505,35 @@ th {
         padding: 1.2rem;
     }
 
+    .motivation-content-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    .banner-stats {
+        flex-direction: row;
+        align-items: flex-start;
+        width: 100%;
+        justify-content: flex-start;
+        gap: 0.5rem;
+    }
+
+    .stat-badge {
+        font-size: 0.95rem;
+        padding: 0.5rem 0.8rem;
+    }
+
     .weekly-form button {
         width: 100%;
         margin-top: 0.5rem;
     }
 
-    /* Кнопка під полями на телефонах */
     .motivation-card {
-        height: 180px;
-        padding: 1.2rem !important;
+        padding: 1.5rem !important;
     }
 
-    .motivation-content h1 {
+    .motivation-text h1 {
         font-size: 1.8rem;
     }
 }
