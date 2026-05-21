@@ -359,8 +359,6 @@ textarea {
 
 .table-container {
     width: 100%;
-    max-height: 280px;
-    overflow-y: auto;
     overflow-x: auto;
 }
 
