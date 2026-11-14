@@ -37,15 +37,15 @@ let statusTimeout;
 // БАЗА МОТИВАЦІЇ
 const quotes = [
     'Тіло досягає того, у що вірить розум.',
-    'Дисципліна — це міст між твоїми цілями та їх досягненням.',
+    'Дисципліна — це міст між твоїми цілями та їхнім досягненням.',
     'Сьогоднішній біль — це твоя завтрашня сила.',
     'Не зупиняйся, коли втомився. Зупиняйся, коли закінчив.',
     "Кожне тяжке тренування — це крок до залізного здоров'я.",
     'Результат не прийде сам, за ним треба йти.',
     'Піт — це сльози твого жиру.',
     'Твоє тіло може все. Головне — переконати свій розум.',
-    "Тиждень має 7 днів. І 'Колись' — не один із них.",
-    'Жоден чемпіон не став таким без поту і болю.',
+    'У тижні сім днів, і «колись» — не один із них.',
+    'Жоден чемпіон не став таким без поту й болю.',
 ];
 
 const backgroundImages = [
@@ -60,11 +60,37 @@ const backgroundImages = [
 function setRandomMotivation() {
     try {
         if (!quoteText || !motivationCard) return;
-        quoteText.textContent = `"${quotes[Math.floor(Math.random() * quotes.length)]}"`;
+        quoteText.textContent = `«${quotes[Math.floor(Math.random() * quotes.length)]}»`;
         motivationCard.style.backgroundImage = `url('${backgroundImages[Math.floor(Math.random() * backgroundImages.length)]}')`;
     } catch (e) {
         console.error('Помилка мотивації:', e);
     }
+}
+
+// ДОПОМІЖНІ ФУНКЦІЇ
+// Локальна дата у форматі YYYY-MM-DD (toISOString дає дату за UTC,
+// через що після опівночі за Києвом підставлялася вчорашня дата)
+function getLocalDateString(date = new Date()) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+}
+
+// Розбирає YYYY-MM-DD як локальну дату (а не UTC)
+function parseLocalDate(str) {
+    const [y, m, d] = str.split('-').map(Number);
+    return new Date(y, m - 1, d);
+}
+
+// Екранування тексту перед вставкою в HTML
+function escapeHtml(str) {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 // БЕЗПЕЧНІ ФУНКЦІЇ ДЛЯ ПАМ'ЯТІ (Щоб дані точно зберігалися)
@@ -161,7 +187,7 @@ function renderWeeklyWeights() {
         }
 
         tr.innerHTML = `
-            <td><strong>${new Date(item.date).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit' })}</strong></td>
+            <td><strong>${parseLocalDate(item.date).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: '2-digit' })}</strong></td>
             <td><span class="weight-record">${item.weight} кг</span>${diffHtml}${diffGoal ? `<br><span class="diff-goal">(до цілі: ${diffGoal} кг)</span>` : ''}</td>
             <td><button class="delete-w-btn" data-date="${item.date}">❌</button></td>
         `;
@@ -171,6 +197,7 @@ function renderWeeklyWeights() {
     document.querySelectorAll('.delete-w-btn').forEach((btn) => {
         btn.addEventListener('click', (e) => {
             const dateToDelete = e.currentTarget.getAttribute('data-date');
+            if (!confirm('Видалити цей запис зважування?')) return;
             saveWeeklyWeights(
                 getWeeklyWeights().filter((w) => w.date !== dateToDelete),
             );
@@ -188,7 +215,7 @@ if (addWeeklyWeightBtn) {
         const selDate = weeklyDateInput.value;
 
         if (!inputWeight || inputWeight <= 0 || !selDate) {
-            alert('Будь ласка, оберіть дату та введіть коректну вагу');
+            alert('Обери дату та введи коректну вагу.');
             return;
         }
 
@@ -226,7 +253,6 @@ function loadDayData() {
 
     updateWaterUI();
     renderHistoryList();
-    setRandomMotivation();
 }
 
 if (dateSelect) dateSelect.addEventListener('change', loadDayData);
@@ -234,33 +260,49 @@ if (btnPlus)
     btnPlus.addEventListener('click', () => {
         currentWater++;
         updateWaterUI();
+        saveDay();
     });
 if (btnMinus)
     btnMinus.addEventListener('click', () => {
         if (currentWater > 0) {
             currentWater--;
             updateWaterUI();
+            saveDay();
         }
     });
 
+// Збереження поточного дня (викликається і кнопкою, і автоматично при змінах)
+function saveDay() {
+    if (!dateSelect || !dateSelect.value) return;
+    const data = getMasterData();
+    data[dateSelect.value] = {
+        programDay: programDaySelect
+            ? programDaySelect.value
+            : 'Відпочинок',
+        water: currentWater,
+        vitD3: vitD3 ? vitD3.checked : false,
+        omega3: omega3 ? omega3.checked : false,
+        magnesium: magnesium ? magnesium.checked : false,
+        ashwa: ashwa ? ashwa.checked : false,
+        lcarnitine: lcarnitine ? lcarnitine.checked : false,
+        vitB: vitB ? vitB.checked : false,
+        notes: dayNotes ? dayNotes.value : '',
+    };
+    saveMasterData(data);
+    renderHistoryList();
+}
+
+// Автозбереження, щоб зміни не губилися при перемиканні дати
+[programDaySelect, vitD3, omega3, magnesium, ashwa, lcarnitine, vitB].forEach(
+    (el) => {
+        if (el) el.addEventListener('change', saveDay);
+    },
+);
+if (dayNotes) dayNotes.addEventListener('input', saveDay);
+
 if (saveBtn) {
     saveBtn.addEventListener('click', () => {
-        const data = getMasterData();
-        data[dateSelect.value] = {
-            programDay: programDaySelect
-                ? programDaySelect.value
-                : 'Відпочинок',
-            water: currentWater,
-            vitD3: vitD3 ? vitD3.checked : false,
-            omega3: omega3 ? omega3.checked : false,
-            magnesium: magnesium ? magnesium.checked : false,
-            ashwa: ashwa ? ashwa.checked : false,
-            lcarnitine: lcarnitine ? lcarnitine.checked : false,
-            vitB: vitB ? vitB.checked : false,
-            notes: dayNotes ? dayNotes.value : '',
-        };
-        saveMasterData(data);
-        loadDayData();
+        saveDay();
 
         clearTimeout(statusTimeout);
         if (statusMsg) {
@@ -298,7 +340,7 @@ function renderHistoryList() {
     historyLog.innerHTML = '';
     sortedDates.forEach((date) => {
         const day = masterData[date];
-        const formattedDate = new Date(date).toLocaleDateString('uk-UA', {
+        const formattedDate = parseLocalDate(date).toLocaleDateString('uk-UA', {
             day: 'numeric',
             month: 'long',
         });
@@ -311,17 +353,17 @@ function renderHistoryList() {
         if (day.magnesium) supplements.push('Магній');
         if (day.ashwa) supplements.push('Ашваганда');
         if (day.lcarnitine) supplements.push('L-карнітин');
-        if (day.vitB) supplements.push('Вітамін B');
+        if (day.vitB) supplements.push('Вітаміни групи B');
         let suppsText =
             supplements.length > 0 ? supplements.join(', ') : 'не відмічено';
 
         const formattedNotes = day.notes
-            ? day.notes.replace(/\n/g, '<br>')
+            ? escapeHtml(day.notes).replace(/\n/g, '<br>')
             : '';
 
         item.innerHTML = `
             <div class="history-date">${formattedDate}</div>
-            <div><strong>Заняття:</strong> ${day.programDay || 'Відпочинок'}</div>
+            <div><strong>Заняття:</strong> ${escapeHtml(day.programDay || 'Відпочинок')}</div>
             <div>💧 Вода: ${day.water || 0} скл. | 💊 Добавки: ${suppsText}</div>
             ${formattedNotes ? `<div style="margin-top: 8px;">📝 <em>${formattedNotes}</em></div>` : ''}
         `;
@@ -330,10 +372,8 @@ function renderHistoryList() {
 }
 
 // ІНІЦІАЛІЗАЦІЯ ПРИ ЗАПУСКУ
-if (dateSelect) dateSelect.value = new Date().toISOString().split('T')[0];
-if (weeklyDateInput)
-    weeklyDateInput.value = dateSelect
-        ? dateSelect.value
-        : new Date().toISOString().split('T')[0];
+if (dateSelect) dateSelect.value = getLocalDateString();
+if (weeklyDateInput) weeklyDateInput.value = getLocalDateString();
+setRandomMotivation();
 loadDayData();
 renderWeeklyWeights();

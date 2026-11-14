@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Oswald:wght@400;600;700&display=swap');
 
 :root {
     --bg-start: #444A38;
@@ -14,11 +14,10 @@
     --shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
     --radius: 12px;
     --input-bg: rgba(112, 114, 118, 0.2);
-    --theme-btn-bg: rgba(77, 70, 52, 0.9);
     --water-btn-bg: rgba(243, 146, 0, 0.2);
     --water-btn-hover: rgba(243, 146, 0, 0.4);
     --checkbox-bg: rgba(112, 114, 118, 0.25);
-    --font-military: 'Volja', 'Oswald', system-ui, sans-serif;
+    --font-military: 'Oswald', system-ui, sans-serif;
 }
 
 * {
@@ -38,7 +37,6 @@ h1,
 h2,
 .primary-btn,
 .danger-btn,
-.target-badge,
 th {
     font-family: var(--font-military);
     letter-spacing: 0.05em;
@@ -62,23 +60,20 @@ textarea {
     backdrop-filter: blur(10px);
 }
 
-.theme-toggle-container {
-    display: none;
-}
-
 /* БАНЕР ТА ЙОГО АДАПТИВНІСТЬ */
-.motivation-card {
+/* .card.motivation-card — щоб перебити загальні стилі .card без !important */
+.card.motivation-card {
     position: relative;
     min-height: 240px;
     border-radius: var(--radius);
     overflow: hidden;
-    background-size: cover !important;
-    background-position: center 30% !important;
-    background-repeat: no-repeat !important;
+    background-size: cover;
+    background-position: center 30%;
+    background-repeat: no-repeat;
     background-color: var(--bg-start);
     display: flex;
     align-items: center;
-    padding: 2.5rem !important;
+    padding: 2.5rem;
     margin-bottom: 2rem;
     border: 2px solid var(--accent);
 }
@@ -357,12 +352,12 @@ textarea {
     font-size: 1rem !important;
 }
 
+/* Горизонтальний скрол для таблиці на вузьких екранах */
 .table-container {
     width: 100%;
     overflow-x: auto;
 }
 
-/* Додано горизонтальний скрол */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -527,8 +522,8 @@ th {
         margin-top: 0.5rem;
     }
 
-    .motivation-card {
-        padding: 1.5rem !important;
+    .card.motivation-card {
+        padding: 1.5rem;
     }
 
     .motivation-text h1 {
