@@ -3,17 +3,11 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Мій Супер Фітнес Щоденник</title>
+        <title>Мій супер фітнес-щоденник</title>
         <link rel="stylesheet" href="style.css" />
     </head>
     <body>
         <div class="container">
-            <div class="theme-toggle-container">
-                <button id="themeToggle" class="theme-btn">
-                    🌙 Темна тема
-                </button>
-            </div>
-
             <section class="card motivation-card" id="motivationCard">
                 <div class="motivation-overlay"></div>
 
@@ -21,9 +15,9 @@
                     <div class="motivation-text">
                         <h1 id="appTitle">
                             Ruslan Sulieimanov
-                            <span class="subtitle">Мій Фітнес Щоденник</span>
+                            <span class="subtitle">Мій фітнес-щоденник</span>
                         </h1>
-                        <p id="quoteText">"Завантаження мотивації..."</p>
+                        <p id="quoteText">«Завантаження мотивації…»</p>
                     </div>
 
                     <div class="banner-stats" id="bannerStats">
@@ -48,7 +42,7 @@
                         <h2>🏋️ Програма на сьогодні</h2>
                         <select id="programDaySelect">
                             <option value="Відпочинок">
-                                Відпочинок & Відновлення
+                                Відпочинок і відновлення
                             </option>
                             <option value="День 1: Груди + Трицепс">
                                 День 1: Груди + Трицепс (Субота)
@@ -81,9 +75,9 @@
                     <section class="card">
                         <h2>💧 Вода (склянки)</h2>
                         <div class="water-tracker">
-                            <button id="btnMinus">-</button>
+                            <button id="btnMinus" aria-label="Мінус одна склянка">−</button>
                             <span id="waterCount">0</span>
-                            <button id="btnPlus">+</button>
+                            <button id="btnPlus" aria-label="Плюс одна склянка">+</button>
                         </div>
                         <div class="progress-container">
                             <div id="waterProgress" class="progress-bar"></div>
@@ -103,8 +97,8 @@
                                 Омега-3</label
                             >
                             <label
-                                ><input type="checkbox" id="magnesium" /> Магній
-                                хелат</label
+                                ><input type="checkbox" id="magnesium" /> Хелат
+                                магнію</label
                             >
                             <label
                                 ><input type="checkbox" id="ashwa" />
@@ -163,7 +157,7 @@
                                 <thead>
                                     <tr>
                                         <th>Дата</th>
-                                        <th>Вага та Прогрес</th>
+                                        <th>Вага та прогрес</th>
                                         <th style="text-align: center">Дія</th>
                                     </tr>
                                 </thead>
@@ -185,7 +179,7 @@
                 <h2>📜 Історія твоїх досягнень</h2>
                 <div id="historyLog">
                     <p class="empty-history">
-                        Тут будуть твої збережені дні...
+                        Тут будуть твої збережені дні…
                     </p>
                 </div>
             </section>
